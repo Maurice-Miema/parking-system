@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://maugus-parking.vercel.app/'
+    'https://maugus-parking.vercel.app'
 ];
 
 // Middlewares
