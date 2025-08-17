@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.accessToken;
     if (!token) return res.status(401).json({ message: "Accès refusé. Pas de token." });
 
     try {

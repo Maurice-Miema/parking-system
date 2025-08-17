@@ -12,17 +12,18 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-    "http://localhost:5173"
+    'http://localhost:5173',
+    'https://maugus-parking.vercel.app/'
 ];
 
 // Middlewares
 app.use(cors({
     origin: function(origin, callback) {
-        // Autorise si origine est dans la liste, ou undefined (Postman, curl)
+        // Autorise si origine dans la liste ou requête directe (Postman, curl)
         if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
+            callback(null, true);
         } else {
-        callback(new Error("Not allowed by CORS"));
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
