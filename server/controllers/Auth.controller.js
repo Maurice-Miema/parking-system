@@ -37,8 +37,8 @@ exports.loginAdmin = async (req, res) => {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: false,       // false en local
+            sameSite: 'lax',     // ou 'none' si tu veux tester avec https
             maxAge: 24 * 60 * 60 * 1000 // 24h
         });
 
