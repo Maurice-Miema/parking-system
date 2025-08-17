@@ -2,6 +2,6 @@
 
 @import "tailwindcss";
 
-@theme{
+@theme {
   --font-roboto: "Roboto", sans-serif;
 }
