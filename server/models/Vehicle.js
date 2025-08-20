@@ -12,7 +12,16 @@ const VehicleSchema = new mongoose.Schema({
     dateEntree: { type: Date, default: Date.now },
     dateSortie: { type: Date },
     prix: { type: Number, default: 0 },
-    paye: { type: Boolean, default: false }
+    paye: {
+        type: String,
+        enum: ['Pas encore', 'Payer'],
+        default: 'Pas encore',
+    },
+    status: {
+        type: String,
+        enum: ['Encours', 'Sortie'],
+        default: 'Encours',
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Vehicle", VehicleSchema);

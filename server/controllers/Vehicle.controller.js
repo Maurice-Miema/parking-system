@@ -60,7 +60,8 @@ exports.vehicleSortie = async (req, res) => {
 
         vehicle.prix = tarifHoraire * diffHeures;
         vehicle.dateSortie = new Date();
-        vehicle.paye = true;
+        vehicle.paye = "Payer";
+        vehicle.status = "Sortie";
 
         await vehicle.save();
 
