@@ -10,6 +10,8 @@ interface PropsForm {
 
 function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [Loading, setLoading] = useState(false);
+    const [Error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         nom: "",
         postnom: "",
@@ -49,7 +51,9 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
         }
 
         try {
-        
+            setLoading(false);
+            setError(null);
+            
             const DataSend = {
                 type: formData.type,
                 plaque: formData.plaque,
@@ -61,12 +65,23 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                 },
             }
             console.log("les data de form a sed :", DataSend);
-            await axios.post("http://localhost:5000/api/vehicle/entreeVehicule", DataSend);
-            
+            const controller = new AbortController();
+            const timeout = setTimeout(()=> controller.abort(), 15000);
+            await axios.post("https://parking-system-b0eo.onrender.com/api/vehicle/entreeVehicule", DataSend, {
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
             if (onSuccess) onSuccess();
             onClose();
-        } catch (error) {
-            console.error("Erreur lors de l'envoi :", error);
+        } catch (err: any) {
+            if(err.name === "CanceledError"){
+                setError("La requête a pris trop de temps. Vérifiez votre connexion.");
+            } else {
+                setError("Imposible d'enregistrer une erreur est survenue")
+            }
+            console.error("Erreur lors de l'envoi :", err);
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -182,6 +197,10 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                                 {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
                             </div>
 
+                            {Error && (
+                                <p className="text-center text-red-400">{Error}</p>
+                            )}
+
                             <div className="flex justify-between mt-10">
                                 <div>
                                     <button 
@@ -196,9 +215,10 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                                 <div>
                                     <button 
                                         type="submit"
+                                        disabled={Loading}
                                         className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
                                     >
-                                        Enregistrer
+                                        {Loading ? "En cours.." : "Enregistrer"}
                                     </button>
                                 </div>
                             </div>
