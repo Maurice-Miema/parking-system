@@ -30,7 +30,6 @@ exports.vehicleEntree = async (req, res) => {
 
 
 // Enregistrer la sortie et calculer le prix
-
 exports.vehicleSortie = async (req, res) => {
     try {
         const { plaque } = req.body;
@@ -75,6 +74,69 @@ exports.vehicleSortie = async (req, res) => {
             prix: vehicle.prix
         });
 
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};
+
+// Lister tous les véhicules
+exports.getAllVehicles = async (req, res) => {
+    try {
+        const vehicles = await Vehicle.find().sort({ dateEntree: -1 });
+        res.status(200).json(vehicles);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};
+
+// Statistiques des véhicules
+exports.getStats = async (req, res) => {
+    try {
+        const total = await Vehicle.countDocuments();
+        const enCours = await Vehicle.countDocuments({ status: "Encours" });
+        const sortie = await Vehicle.countDocuments({ status: "Sortie" });
+
+        // Nombre total par type
+        const parType = await Vehicle.aggregate([
+            { $group: { _id: "$type", total: { $sum: 1 } } }
+        ]);
+
+        // Nombre par type + status
+        const parTypeEtStatus = await Vehicle.aggregate([
+            { $group: { _id: { type: "$type", status: "$status" }, total: { $sum: 1 } } }
+        ]);
+
+        res.status(200).json({
+            total,
+            enCours,
+            sortie,
+            parType,
+            parTypeEtStatus
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};
+
+// Supprimer un véhicule
+exports.deleteVehicle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const vehicle = await Vehicle.findByIdAndDelete(id);
+        if (!vehicle) return res.status(404).json({ message: "Véhicule introuvable" });
+        res.status(200).json({ message: "Véhicule supprimé avec succès" });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};
+
+// Recherche par plaque
+exports.searchByPlaque = async (req, res) => {
+    try {
+        const { plaque } = req.params;
+        const vehicle = await Vehicle.findOne({ plaque }).sort({ dateEntree: -1 });
+        if (!vehicle) return res.status(404).json({ message: "Véhicule introuvable" });
+        res.status(200).json(vehicle);
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
     }

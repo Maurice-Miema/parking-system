@@ -1,11 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { vehicleEntree, vehicleSortie } = require("../controllers/Vehicle.controller");
+const verifyToken = require("../middlewares/auth");
+const { vehicleEntree, vehicleSortie, getAllVehicles, getStats, deleteVehicle,searchByPlaque } = require("../controllers/Vehicle.controller");
 
 
-router.post("/entreeVehicule", vehicleEntree);
-router.post("/sortieVehicule", vehicleSortie);
+router.post("/entreeVehicule", verifyToken, vehicleEntree);
+router.post("/sortieVehicule", verifyToken, vehicleSortie);
+router.get("/getAllVehicles", verifyToken, getAllVehicles);
+router.get("/getStats", verifyToken, getStats);
+router.delete("/deleteVehicle", verifyToken, deleteVehicle);
+router.get("/searchByPlaque", verifyToken, searchByPlaque);
 
 module.exports = router;
+
 
 
