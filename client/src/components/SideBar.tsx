@@ -3,6 +3,8 @@ import { RxDashboard } from "react-icons/rx";
 import { IoCarSportOutline } from "react-icons/io5";
 import { useSidebar } from "../context/SidebarContext";
 import { IoClose } from "react-icons/io5";
+import { LuCircleParkingOff } from "react-icons/lu";
+import { MdPayment } from "react-icons/md";
 
 
 function SideBar() {
@@ -10,10 +12,12 @@ function SideBar() {
     const LinkMenu = [
         {"link": "Dashboard", "icone": <RxDashboard />, "path": "/Dashboard"},
         {"link": "Vehicule", "icone": <IoCarSportOutline />, "path": "/Vehicule"},
+        {"link": "Parking", "icone": <LuCircleParkingOff />, "path": "/Parking"},
+        {"link": "Gestion des tarifs", "icone": <MdPayment />, "path": "/Tarif"},
     ]
     return (
         <>
-            <div className="lg:w-72 bg-gray-50  px-8 py-4 max-lg:hidden">
+            <div className="lg:w-64 bg-gray-50  px-8 py-4 max-lg:hidden">
                 <div className="">
                     <h1 className="text-center text-2xl font-semibold text-emerald-500">Parkin System</h1>
                 </div>

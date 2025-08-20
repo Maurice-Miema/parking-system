@@ -23,7 +23,7 @@ function Navbar() {
                 const res = await axios.get("https://parking-system-b0eo.onrender.com/api/auth/me",{
                     withCredentials: true 
                 });
-                console.log("info usser conect: ", res);
+                // console.log("info usser conect: ", res);
                 setUser(res.data);
             } catch (error) {
                 console.error("erreur", error);
@@ -42,7 +42,7 @@ function Navbar() {
                 <h1 
                     className="text-3xl font-semibold max-sm:text-xl"
                 >
-                    Welcom, Maurice 👋
+                    Welcome, Maurice 👋
                     {/* Dashboard */}
                 </h1>
             </div>
