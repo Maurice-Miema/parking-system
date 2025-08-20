@@ -10,6 +10,8 @@ interface FromProps{
 
 function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [Loading, setLoading] = useState(false);
+    const [Error, setError] = useState<String | null>(null);
     const [formData, setFormData] = useState({
         type: "",
         PrixParHeure: "",
@@ -40,18 +42,30 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
         }
 
         try {
-        
+            setLoading(true);
+            setError(null);
             const DataSend = {
                 type: formData.type,
                 prixHeure: formData.PrixParHeure
             }
             console.log("les data de form a sed :", DataSend);
-            await axios.post("http://localhost:5000/api/tarifs/addTarifandUpdate", DataSend);
-            
+            const controller = new AbortController();
+            const timeout = setTimeout(()=> controller.abort(), 15000);
+            await axios.post("https://parking-system-b0eo.onrender.com/api/tarifs/addTarifandUpdate", DataSend, {
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
             if (onSuccess) onSuccess();
             onClose();
-        } catch (error) {
-            console.error("Erreur lors de l'envoi :", error);
+        } catch (err: any) {
+            if(err.name === "CanceledError"){
+                setError("La requête a pris trop de temps. Vérifiez votre connexion.");
+            } else {
+                setError("Imposible d'enregistrer une erreur est survenue")
+            }
+            console.error("Erreur lors de l'envoi :", err);
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -75,7 +89,9 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
                             className="bg-white w-lg rounded-md px-4 py-2 mt-4"
                         >
                             <h1 className="text-2xl font-semibold text-center">Tarif par heure</h1>
-
+                            {Error && (
+                                <p className="text-center text-red-500 mt-2"> {Error} </p>
+                            )}
                             <form onSubmit={handleSubmit}>
                                 <div className="mt-4 mb-4">
                                     <label className="block font-medium" htmlFor="type">Type</label>
@@ -112,9 +128,10 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
                                 <div className="flex justify-end mt-4">
                                     <button 
                                         type="submit"
+                                        disabled={Loading}
                                         className="px-8 py-2 bg-emerald-500 rounded-md text-white cursor-pointer"
                                     >
-                                        Envoyer
+                                        {Loading ? "En cours ..." : "Envoyer"}
                                     </button>
                                 </div>
                             </form>

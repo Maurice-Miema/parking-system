@@ -2,10 +2,38 @@ import { MdOutlineAdd } from 'react-icons/md'
 import Navbar from '../components/Navbar'
 import { motion } from 'motion/react'
 import FormTarif from '../components/FormTarif'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 function Tarif() {
     const [isOPenForm, setIsOpenForm] = useState(false);
+    const [Loading, setLoading] = useState(false);
+    const [Error, setError] = useState<String | null>(null);
+    const [Tarif, setTarif] = useState([])
+
+    const API_URL = 'https://parking-system-b0eo.onrender.com/api/tarifs/GetTarif';
+    
+    const fetchTarif = async ()=> {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000)
+            const reponse = await axios.get(API_URL);
+            console.log("data Tarif :", reponse);
+            setTarif(reponse.data);
+            clearTimeout(timeout);
+        } catch (error) {
+            setError("Impossible de charger les Tarif. Vérifiez votre connexion.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(()=> {
+        fetchTarif();
+    },[]);
 
 
     return (
@@ -38,23 +66,53 @@ function Tarif() {
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-slate-50">
                                     <tr className="">
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:px-2 ">Type </th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:hidden  ">Prix par Heure</th>
-                                        {/* <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">Place occuper</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:px-2 "> Action </th> */}
+                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:px-2 ">Type </th>
+                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:hidden  ">Prix par Heure</th>
                                     </tr>
                                     </thead>
 
                                     <tbody className="divide-y divide-gray-200 text-xl">
-                                        <motion.tr 
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.5, }} // Effet en cascade
-                                            className=''
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 max-sm:px-2">Voiture</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 max-sm:hidden ">25 Places</td>
-                                        </motion.tr>
+                                        {Loading ? (
+                                            <tr>
+                                                <td colSpan={2} className="text-center py-10 text-red-400">
+                                                    <div className="flex flex-col items-center gap-4">
+                                                        {/* Spinner */}
+                                                        <div className=" size-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                                                        <p className="text-gray-700 font-medium">Chargement des Tarif...</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : Error ? (
+                                            <tr>
+                                                <td colSpan={3} className="text-center py-10 text-red-400">
+                                                    <p className="text-red-600 text-center font-medium">{Error}</p>
+                                                    <button
+                                                        onClick={() => window.location.reload()}
+                                                        className="px-4 py-2 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600"
+                                                    >
+                                                        Réessayer
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ) : Tarif.length > 0 ? (
+                                            Tarif.map((T: any, index)=> (
+                                                <motion.tr 
+                                                    key={index}
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.5, delay: index * 0.1 }} // Effet en cascade
+                                                >
+                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-800 max-sm:px-2">{T.type}</td>
+                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-800 max-sm:hidden "> {T.prixHeure} $ </td>
+                                                </motion.tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={6} className="text-center py-10 text-red-400">
+                                                    Aucun Tarif trouvé.
+                                                </td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -64,7 +122,7 @@ function Tarif() {
             </div>
 
             {/* le composent */}
-            < FormTarif isOpen={isOPenForm} onClose={()=> setIsOpenForm(false)}  />
+            < FormTarif isOpen={isOPenForm} onClose={()=> setIsOpenForm(false)} onSuccess={()=> fetchTarif()}  />
         </section>
     )
 }
