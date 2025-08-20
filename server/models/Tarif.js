@@ -5,5 +5,5 @@ const TarifSchema = new mongoose.Schema({
     prixHeure: { type: Number, required: true, default: 500 }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Tarif", TarifSchema)
-;
+module.exports = mongoose.model("Tarif", TarifSchema);
+
