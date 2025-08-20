@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middlewares/auth");
 const { registerAdmin, loginAdmin, getMe } = require('../controllers/Auth.controller');
 
-router.post('/register', registerAdmin);
+router.post('/register', verifyToken, registerAdmin);
 router.post('/login', loginAdmin);
 router.get("/me", verifyToken, getMe);
 
