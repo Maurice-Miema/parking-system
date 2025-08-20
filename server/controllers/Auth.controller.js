@@ -38,8 +38,8 @@ exports.loginAdmin = async (req, res) => {
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 24 * 60 * 60 * 1000 // 24h
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            maxAge: 24 * 60 * 60 * 1000
         });
 
         res.status(200).json({ message: 'Connexion réussie'});
@@ -48,3 +48,13 @@ exports.loginAdmin = async (req, res) => {
     }
 };
 
+// Route /me
+exports.getMe = async (req, res) => {
+    try {
+        const user = await Admin.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
+};
