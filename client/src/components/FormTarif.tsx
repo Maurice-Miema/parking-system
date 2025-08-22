@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../services/Api';
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react';
 
@@ -51,7 +51,7 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
             console.log("les data de form a sed :", DataSend);
             const controller = new AbortController();
             const timeout = setTimeout(()=> controller.abort(), 15000);
-            await axios.post("https://parking-system-b0eo.onrender.com/api/tarifs/addTarifandUpdate", DataSend, {
+            await api.post("/api/tarifs/addTarifandUpdate", DataSend, {
                 signal: controller.signal
             });
             clearTimeout(timeout);
@@ -79,22 +79,22 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
                     onClick={onClose}
                     className='absolute inset-0 bg-black/60 backdrop-blur-md flex justify-center cursor-pointer max-sm:px-4'
                 >
-                    <div>
+                    <div className="w-lg">
                         <motion.div
                             initial={{ opacity: 0, y: -15}}
                             animate={{ opacity: 1, y: 15}}
                             exit={{ opacity: 0, y: 15}}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
                             onClick={(e)=> e.stopPropagation()}
-                            className="bg-white w-lg rounded-md px-4 py-2 mt-4"
+                            className="bg-white rounded-md px-4 py-2 mt-4"
                         >
-                            <h1 className="text-2xl font-semibold text-center">Tarif par heure</h1>
+                            <h1 className="text-2xl font-semibold text-center">Tarif par Heure</h1>
                             {Error && (
                                 <p className="text-center text-red-500 mt-2"> {Error} </p>
                             )}
                             <form onSubmit={handleSubmit}>
                                 <div className="mt-4 mb-4">
-                                    <label className="block font-medium" htmlFor="type">Type</label>
+                                    <label className="block" htmlFor="type">Type</label>
                                     <select
                                         name="type"
                                         id="type"
@@ -112,14 +112,14 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
                                 </div>
 
                                 <div className="mb-2">
-                                    <label htmlFor="number" className="block font-medium">Prix par Heure</label>
+                                    <label htmlFor="PrixParHeure" className="block">Montant Par Heure</label>
                                     <input 
                                         id="number"
                                         name="PrixParHeure"
                                         type="number"
                                         value={formData.PrixParHeure}
                                         onChange={handleChange}
-                                        placeholder="Veuillez saisir le prix par heure"
+                                        placeholder="Veuillez saisir lee nombre de places"
                                         className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                     />
                                     {errors.PrixParHeure && <p className="text-red-500 text-sm">{errors.PrixParHeure}</p>}
@@ -131,7 +131,8 @@ function FormTarif({ isOpen, onClose, onSuccess }: FromProps) {
                                         disabled={Loading}
                                         className="px-8 py-2 bg-emerald-500 rounded-md text-white cursor-pointer"
                                     >
-                                        {Loading ? "En cours ..." : "Envoyer"}
+                                        
+                                        {Loading ? "en cours .." : "Envoyer"}
                                     </button>
                                 </div>
                             </form>

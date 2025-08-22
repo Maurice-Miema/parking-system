@@ -1,13 +1,12 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 // icone
-import { CiEdit, CiSearch } from "react-icons/ci";
+import { CiSearch } from "react-icons/ci";
 import { MdOutlineAdd } from "react-icons/md";
-import { TbDotsVertical } from "react-icons/tb";
 import { AiOutlineDelete } from "react-icons/ai";
 // composent
-import FomAddClient from "../components/FormAddClient";
-import ModalDelete from "../components/ModalDelete";
+import FormUser from "../components/FormUser";
+import ModalDeleteUser from "../components/ModalDeleteUser";
 import api from "../services/Api";
 
 function Recrutement() {
@@ -15,22 +14,22 @@ function Recrutement() {
     const [isModalDelete, setIsModalDelete] = useState(false); // open Modalelete
     const [SearchTerm, setSearchTerm] = useState(""); // Search item for vehicule
     const [debouncedSearch, setDebouncedSearch] = useState(SearchTerm);
-    const [openMenuId , setOpenMenuId ] = useState<String | null>(null);
+    // const [openMenuId , setOpenMenuId ] = useState<String | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
     const [Vehicule, setVehicule] = useState([]);
     const [SelectedVehicule, setSelectedVehicule] = useState<any | null>(null)
 
-    const handleOpenMenu = (id: String)=> {
-        setOpenMenuId(openMenuId === id ? null : id);
-    }
+    // const handleOpenMenu = (id: String)=> {
+    //     setOpenMenuId(openMenuId === id ? null : id);
+    // }
 
     // Fermer le menu en cliquant en dehors
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setOpenMenuId(null);
+                // setOpenMenuId(null);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -69,16 +68,16 @@ function Recrutement() {
 
     const OpenModalDelete = (v: any)=>{
         setSelectedVehicule(v);
-        setOpenMenuId(null);
+        // setOpenMenuId(null);
         setIsModalDelete(true)
     }
 
     return (    
         <>
-            <section className="font-roboto">
+            <section className="font-roboto" >
                 <div className="p-2 mt-3">
                     <div>
-                        <h1 className='text-2xl font-roboto'>Vehicule</h1>
+                        <h1 className='text-3xl'>Utilisateur</h1>
                     </div>
 
                     <div className="sm:flex items-center max-sm:grid max-sm:gap-4">
@@ -109,7 +108,7 @@ function Recrutement() {
                                 type="button"
                             >
                                 < MdOutlineAdd size={25} />
-                                Enregistrer un Vehicule
+                                Ajouter un Utilisateur
                             </button>
                         </div>
                     </div>
@@ -122,13 +121,10 @@ function Recrutement() {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-slate-50">
                                     <tr className="">
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:px-2 ">Type </th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium  ">Proprietaire</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">email</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:hidden ">Plaque</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">Payer</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">Montant</th>
-                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:px-2 ">Statut</th>
+                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium  ">Identite</th>
+                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">Email</th>
+                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium max-lg:hidden">Fonction</th>
+                                        <th scope="col" className="px-6 py-3 text-start text-base font-medium ">Role</th>
                                         <th scope="col" className="px-6 py-3 text-start text-base font-medium max-sm:px-2 "> Action </th>
                                     </tr>
                                 </thead>
@@ -164,65 +160,20 @@ function Recrutement() {
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 }} // Effet en cascade
                                             >
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-sm:px-2"> {v.type}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 ">{v.proprietaire.nom} {v.proprietaire.postnom} {v.proprietaire.prenom}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm  text-gray-800  ">{v.proprietaire.nom} {v.proprietaire.postnom} {v.proprietaire.prenom}</td>
                                                 <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-lg:hidden"> {v.proprietaire.email}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 "> {v.proprietaire.email}</td>
                                                 <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-sm:hidden"> {v.plaque}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-sm:hidden"> {v.paye}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-lg:hidden">{v.prix} $</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-center text-gray-800 max-sm:px-2">
-                                                    <button 
-                                                        type="button" 
-                                                        className={`px-3 py-1 rounded-xl cursor-pointer ${
-                                                            v.status === "Encours"
-                                                            ? "bg-red-100 text-red-500"
-                                                            : v.status === "Sortie"
-                                                            ? "bg-green-100 text-green-600"
-                                                            : "bg-gray-100 text-gray-500"
-                                                        }`}
-                                                    >
-                                                        {v.status}
-                                                    </button>
-                                                </td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-center font-medium text-gray-800 relative overflow-visible max-sm:text-end max-sm:px-2">
+                                                <td className="px-6 py-1 whitespace-nowrap flex justify-center text-sm  text-gray-800 overflow-visible max-sm:text-end max-sm:px-2">
                                                     <button
                                                         id={`button-${v._id}`}
                                                         type="button"
-                                                        onClick={()=> handleOpenMenu(v._id)}
-                                                        className="px-1 py-3 rounded-lg hover:bg-green-400/15 cursor-pointer text-green-500"
+                                                        onClick={()=> OpenModalDelete(v._id)}
+                                                        className="px-4 py-2 hover:bg-red-100 hover:rounded-md text-red-500 flex items-center gap-2 cursor-pointer"
                                                     >
-                                                        <TbDotsVertical size={20} />
+                                                        <AiOutlineDelete size={20} /> Supprimer
                                                     </button>
 
-                                                    {openMenuId === v._id && (
-                                                        <motion.div
-                                                            ref={menuRef}
-                                                            id={`menu-${v._id}`}
-                                                            initial={{ opacity: 0, y: -20, scale: 0.9 }}
-                                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                                                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                                                            className="absolute right-0 top-4 bg-white w-48 px-2 py-2 border border-gray-300 shadow-lg rounded-md z-10"
-                                                        >
-                                                            <ul className="text-gray-800">
-                                                                {/* <li className="px-4 py-2 hover:bg-gray-100 hover:rounded-md flex items-center gap-2 cursor-pointer">
-                                                                    <GrView size={20} className="text-gray-600" /> View Details
-                                                                </li> */}
-                                                                <li 
-                                                                    
-                                                                    className="px-4 py-2 hover:bg-gray-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
-                                                                >
-                                                                    <CiEdit size={20} /> Marquer Sortie
-                                                                </li>
-                                                                <li
-                                                                    onClick={() => OpenModalDelete(v)}
-                                                                    className="px-4 py-2 hover:bg-red-100 hover:rounded-md text-red-500 flex items-center gap-2 cursor-pointer"
-                                                                >
-                                                                    <AiOutlineDelete size={20} /> Supprimer
-                                                                </li>
-                                                            </ul>
-                                                        </motion.div>
-                                                    )}
                                                 </td>
                                             </motion.tr>
                                         ))
@@ -244,8 +195,8 @@ function Recrutement() {
             </section>
 
             {/* compoent */}
-            < FomAddClient isOpen={isForm} onClose={()=> setIsform(false)} onSuccess={()=> fetchVehicule()} />
-            < ModalDelete 
+            < FormUser isOpen={isForm} onClose={()=> setIsform(false)} onSuccess={()=> fetchVehicule()} />
+            < ModalDeleteUser 
                 isOPenModal={isModalDelete} 
                 onClose={()=> setIsModalDelete(false)} 
                 vehicule={SelectedVehicule}

@@ -2,8 +2,8 @@ import { FaEnvelope } from "react-icons/fa";
 import { GoPasskeyFill } from "react-icons/go";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../services/Api";
 
 interface LoginForm {
     email: string;
@@ -34,9 +34,7 @@ function Login() {
         try {
             const controler = new AbortController();
             const timeout = setTimeout(() => controler.abort(), 30000); // pour 30 sec
-            await axios.post("https://parking-system-b0eo.onrender.com/api/auth/login", form, {
-                withCredentials: true
-            });
+            await api.post("/api/auth/login", form);
             clearTimeout(timeout);
             navigate("/Dashboard");
         } catch (err: any) {
@@ -54,10 +52,11 @@ function Login() {
 
 
     return (
-        <section className="px-4 md:px-0 h-screen flex items-center justify-center bg-gray-200">
+        <section className="px-4 md:px-0 font-roboto h-screen flex items-center justify-center bg-gray-200">
             <div className="bg-white rounded-xl md:w-lg w-md md:px-14 px-4 py-8">
-                <h1 className="text-center text-2xl font-semibold text-green-600"> Parking System</h1>
-                <h2 className="text-center">
+                <h1 className="text-center text-2xl pb-4">Authentification</h1>
+                <h1 className="text-center text-4xl font-semibold text-emerald-500"> Parking System</h1>
+                <h2 className="text-center font-medium py-1">
                     Identifiez-vous pour continuer.
                 </h2>
 

@@ -10,7 +10,7 @@ interface ModalProps {
     vehicule: any| null;
 }
 
-function ModalDelete({isOPenModal, onClose, vehicule, onDeleted}: ModalProps) {
+function ModalDeleteUser({isOPenModal, onClose, vehicule, onDeleted}: ModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -68,9 +68,9 @@ function ModalDelete({isOPenModal, onClose, vehicule, onDeleted}: ModalProps) {
                         </div>
                         
                         <div className="md:w-96 md:block">
-                            <h1 className="text-xl text-center py-4">Êtes-vous sûr de vouloir supprimer ce Vehicule ?</h1>
+                            <h1 className="text-xl text-center py-4">Êtes-vous sûr de vouloir supprimer cet utilisateur ?</h1>
                             <p className="text-center text-gray-400">
-                                La suppression de ce  Vehicule est permanente et irréversible. Une fois supprimée, 
+                                La suppression de cet utilisateur est permanente et irréversible. Une fois supprimée, 
                                 il ne pourra pas être récupérée.
                             </p>
                         </div>
@@ -105,4 +105,6 @@ function ModalDelete({isOPenModal, onClose, vehicule, onDeleted}: ModalProps) {
     )
 }
 
-export default ModalDelete
+export default ModalDeleteUser
+
+

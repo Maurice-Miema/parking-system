@@ -1,19 +1,21 @@
 import { NavLink } from "react-router-dom"
-import { RxDashboard } from "react-icons/rx";
-import { IoCarSportOutline } from "react-icons/io5";
 import { useSidebar } from "../context/SidebarContext";
 import { IoClose } from "react-icons/io5";
-import { LuCircleParkingOff } from "react-icons/lu";
 import { MdPayment } from "react-icons/md";
+import { FaUserCog } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
+import { FaCar } from "react-icons/fa";
+import { BsFillSignNoParkingFill } from "react-icons/bs";
 
 
 function SideBar() {
     const { isOpen, toggleSidebar } = useSidebar();
     const LinkMenu = [
-        {"link": "Dashboard", "icone": <RxDashboard />, "path": "/Dashboard"},
-        {"link": "Vehicule", "icone": <IoCarSportOutline />, "path": "/Vehicule"},
-        {"link": "Parking", "icone": <LuCircleParkingOff />, "path": "/Parking"},
-        {"link": "Gestion des tarifs", "icone": <MdPayment />, "path": "/Tarif"},
+        {"link": "Dashboard", "icone": <MdDashboard size={25} />, "path": "/Dashboard"},
+        {"link": "Vehicule", "icone": <FaCar size={25} />, "path": "/Vehicule"},
+        {"link": "Parking", "icone": <BsFillSignNoParkingFill size={25} />, "path": "/Parking"},
+        {"link": "Tarifs", "icone": <MdPayment size={25} />, "path": "/Tarif"},
+        {"link": "Utilisateurs", "icone": <FaUserCog size={25} />, "path": "/Utilisateur"},
     ]
     return (
         <>
@@ -32,8 +34,8 @@ function SideBar() {
                                 <NavLink
                                     to={item.path}
                                     className={({isActive})=>
-                                        `flex items-center gap-2 text-xl  cursor-pointer ${
-                                            isActive ? "text-emerald-600 font-medium text-xl" : "hover:text-emerald-600"
+                                        `flex items-center gap-4 text-xl  cursor-pointer ${
+                                            isActive ? "text-emerald-600 font-medium text-center text-xl" : "hover:text-emerald-600"
                                         }`
                                     }
                                 >
@@ -42,6 +44,8 @@ function SideBar() {
                                 </NavLink>
                             </li>
                         ))}
+
+                        
                     </ul>
                 </div>
             </div>
@@ -64,14 +68,14 @@ function SideBar() {
                     </div>
 
                     <div className="mt-20 flex justify-center">
-                        <ul className="mt-5 space-y-4">
+                        <ul className="mt-5 space-y-6 text-white">
                             {LinkMenu.map((item, index) => (
                                 <li key={index}>
                                     <NavLink
                                         to={item.path}
                                         onClick={toggleSidebar}
                                         className={({isActive})=>
-                                            `flex items-center gap-2 text-xl  cursor-pointer ${
+                                            `flex items-center gap-2 text-xl cursor-pointer ${
                                                 isActive ? "text-emerald-600 font-medium text-xl" : "hover:text-emerald-600"
                                             }`
                                         }
