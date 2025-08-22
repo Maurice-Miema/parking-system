@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Vehicule from "./pages/Vehicule";
 import Parking from "./pages/Parking";
 import Tarif from "./pages/Tarif";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="Vehicule" element={<Vehicule />} />
           <Route path="Parking" element={<Parking />} />
           <Route path="Tarif" element={<Tarif />} />
+          <Route path="Utilisateur" element={<Users/>} />
 
         </Route>
       </Routes>

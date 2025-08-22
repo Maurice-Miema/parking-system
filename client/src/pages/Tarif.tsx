@@ -1,9 +1,8 @@
-import { MdOutlineAdd } from 'react-icons/md'
-import Navbar from '../components/Navbar'
-import { motion } from 'motion/react'
-import FormTarif from '../components/FormTarif'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { MdOutlineAdd } from 'react-icons/md';
+import { motion } from 'motion/react';
+import FormTarif from '../components/FormTarif';
+import { useEffect, useState } from 'react';
+import api from '../services/Api';
 
 function Tarif() {
     const [isOPenForm, setIsOpenForm] = useState(false);
@@ -11,7 +10,7 @@ function Tarif() {
     const [Error, setError] = useState<String | null>(null);
     const [Tarif, setTarif] = useState([])
 
-    const API_URL = 'https://parking-system-b0eo.onrender.com/api/tarifs/GetTarif';
+    const API_URL = '/api/tarifs/GetTarif';
     
     const fetchTarif = async ()=> {
         try {
@@ -20,8 +19,7 @@ function Tarif() {
 
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000)
-            const reponse = await axios.get(API_URL);
-            console.log("data Tarif :", reponse);
+            const reponse = await api.get(API_URL);
             setTarif(reponse.data);
             clearTimeout(timeout);
         } catch (error) {
@@ -37,11 +35,10 @@ function Tarif() {
 
 
     return (
-        <section>
-            < Navbar />
+        <section className='font-roboto'>
             <div className='p-2 mt-3'>
                 <div className='px-4 py-2'>
-                    <h1 className="font-semibold text-2xl"> Gestion des tarifs</h1>
+                    <h1 className=" text-2xl"> Gestion des tarifs</h1>
                 </div>
 
                 <div className="flex justify-end max-sm:grid max-sm:gap-4">
@@ -67,7 +64,7 @@ function Tarif() {
                                     <thead className="bg-slate-50">
                                     <tr className="">
                                         <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:px-2 ">Type </th>
-                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:hidden  ">Prix par Heure</th>
+                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium   ">Prix par Heure</th>
                                     </tr>
                                     </thead>
 
@@ -77,7 +74,7 @@ function Tarif() {
                                                 <td colSpan={2} className="text-center py-10 text-red-400">
                                                     <div className="flex flex-col items-center gap-4">
                                                         {/* Spinner */}
-                                                        <div className=" size-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                                                        <div className=" size-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                                                         <p className="text-gray-700 font-medium">Chargement des Tarif...</p>
                                                     </div>
                                                 </td>
@@ -87,8 +84,8 @@ function Tarif() {
                                                 <td colSpan={3} className="text-center py-10 text-red-400">
                                                     <p className="text-red-600 text-center font-medium">{Error}</p>
                                                     <button
-                                                        onClick={() => window.location.reload()}
-                                                        className="px-4 py-2 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600"
+                                                        onClick={() => fetchTarif()}
+                                                        className="px-4 py-2 bg-red-500 mt-4 cursor-pointer text-white rounded-md hover:bg-red-600"
                                                     >
                                                         Réessayer
                                                     </button>
@@ -102,8 +99,8 @@ function Tarif() {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ duration: 0.5, delay: index * 0.1 }} // Effet en cascade
                                                 >
-                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-800 max-sm:px-2">{T.type}</td>
-                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-gray-800 max-sm:hidden "> {T.prixHeure} $ </td>
+                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800 max-sm:px-2">{T.type}</td>
+                                                    <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800 "> {T.prixHeure} $ </td>
                                                 </motion.tr>
                                             ))
                                         ) : (

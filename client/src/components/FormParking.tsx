@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../services/Api";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useState } from "react";
 
@@ -51,7 +51,7 @@ function FormParking( {isOpen, onClose, onSuccess}: FromProps) {
             console.log("les data de form a sed :", DataSend);
             const controller = new AbortController();
             const timeout = setTimeout(()=> controller.abort(), 15000);
-            await axios.post("https://parking-system-b0eo.onrender.com/api/parking/AddTarkingAndUpdate", DataSend, {
+            await api.post("/api/parking/AddTarkingAndUpdate", DataSend, {
                 signal: controller.signal
             });
 

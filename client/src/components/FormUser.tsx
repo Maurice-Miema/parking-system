@@ -8,7 +8,8 @@ interface PropsForm {
     onSuccess?: () => void;
 }
 
-function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
+
+function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
@@ -17,8 +18,9 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
         postnom: "",
         prenom: "",
         email: "",
-        plaque: "",
-        type: "",
+        fonction: "",
+        password: "",
+        role: "",
     });
 
 
@@ -35,8 +37,9 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
         if (!formData.postnom) tempErrors.postnom = "Le postnom est obligatoire";
         if (!formData.prenom) tempErrors.prenom = "Le prénom est obligatoire";
         if (!formData.email) tempErrors.email = "L'email est obligatoire";
-        if (!formData.plaque) tempErrors.plaque = "La plaque est obligatoire";
-        if (!formData.type) tempErrors.type = "Le type est obligatoire";
+        if (!formData.password) tempErrors.password = "Le password est obligatoire";
+        if (!formData.fonction) tempErrors.fonction = "La fonction est obligatoire";
+        if (!formData.role) tempErrors.role = "Le role est obligatoire";
         return tempErrors;
     };
 
@@ -51,12 +54,13 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
         }
 
         try {
-            setLoading(false);
+            setLoading(true);
             setError(null);
             
             const DataSend = {
-                type: formData.type,
-                plaque: formData.plaque,
+                role: formData.role,
+                plaque: formData.password,
+                fonction: formData.fonction,
                 proprietaire: {
                     nom: formData.nom,
                     postnom: formData.postnom,
@@ -103,13 +107,13 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                         onClick={(e) => e.stopPropagation()}
                         className="bg-white rounded-md px-4 py-3 w-lg"
                     >
-                        <h1 className="text-center text-2xl font-medium">Ajouter un Vehicule </h1>
+                        <h1 className="text-center text-2xl font-medium">Ajouter Un Utilisateur </h1>
 
-                        <form onSubmit={handleSubmit} className="mt-4">
+                        <form className="mt-4">
 
                             <div className="grid gap-2 md:grid-cols-2">
                                 <div className="mb-2">
-                                    <label htmlFor="nom" className="block text-md">Nom</label>
+                                    <label htmlFor="nom" className="block text-md">Nom Utilisateur</label>
                                     <input 
                                         id="nom"
                                         name="nom"
@@ -123,7 +127,7 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                                 </div>
 
                                 <div className="mb-2">
-                                    <label htmlFor="postnom" className="block text-md">Potnom</label>
+                                    <label htmlFor="postnom" className="block text-md">Potnom Utilisateur</label>
                                     <input 
                                         id="postnom"
                                         name="postnom"
@@ -137,64 +141,79 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                                 </div>
                             </div>
 
-                            <div className="mb-2">
-                                <label htmlFor="prenom" className="block text-md">Prenom</label>
-                                <input 
-                                    id="prenom"
-                                    name="prenom"
-                                    type="text"
-                                    value={formData.prenom}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir le prénom du client"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
+                            <div className="grid md:grid-cols-2 gap-2">
+                                <div className="mb-2">
+                                    <label htmlFor="prenom" className="block text-md">Prenom Utilisateur</label>
+                                    <input 
+                                        id="prenom"
+                                        name="prenom"
+                                        type="text"
+                                        value={formData.prenom}
+                                        onChange={handleChange}
+                                        placeholder="Veuillez saisir le prénom du client"
+                                        className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                    />
+                                    {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
+                                </div>
+
+                                <div className="mb-2">
+                                    <label htmlFor="email" className="block text-md">Email Utilisateur</label>
+                                    <input 
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="Veuillez saisir l'adresse email du client"
+                                        className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                    />
+                                    {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                                </div>
                             </div>
 
                             <div className="mb-2">
-                                <label htmlFor="email" className="block text-md">Email</label>
+                                <label htmlFor="fonction" className="block text-md">Fonction Utilisateur</label>
                                 <input 
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir l'adresse email du client"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                            </div>
-
-                            <div className="mb-2">
-                                <label htmlFor="plaque" className="block text-md">Plaque</label>
-                                <input 
-                                    id="plaque"
-                                    name="plaque"
+                                    id="fonction"
+                                    name="fonction"
                                     type="text"
-                                    value={formData.plaque}
+                                    value={formData.fonction}
                                     onChange={handleChange}
                                     placeholder="Veuillez saisir la plaque du véhicule"
                                     className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                 />
-                                {errors.plaque && <p className="text-red-500 text-sm">{errors.plaque}</p>}
+                                {errors.fonction && <p className="text-red-500 text-sm">{errors.fonction}</p>}
+                            </div>
+
+                            <div className="mb-2">
+                                <label htmlFor="password" className="block text-md">Password Utilisateur</label>
+                                <input 
+                                    id="password"
+                                    name="password"
+                                    type="text"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Veuillez saisir la plaque du véhicule"
+                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                />
+                                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                             </div>
 
                             <div className="mt-4 mb-2">
-                                <label className="block" htmlFor="type">Type</label>
+                                <label className="block" htmlFor="role">Role</label>
                                 <select
-                                    name="type"
-                                    id="type"
-                                    value={formData.type}
+                                    name="role"
+                                    id="role"
+                                    value={formData.role}
                                     onChange={handleChange}
                                     className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
                                 >
-                                    <option value="">Choisissez le type</option>
-                                    <option value="voiture">voiture</option>
-                                    <option value="camion" >camion</option>
-                                    <option value="bus">bus</option>
-                                    <option value="moto">moto</option>
+                                    <option value="">Choisissez le Role</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Recepteur" >Recepteur</option>
+                                    <option value="Comptable">Comptable</option>
                                 </select>
-                                {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+                                {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
                             </div>
 
                             {Error && (
@@ -216,6 +235,7 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                                     <button 
                                         type="submit"
                                         disabled={Loading}
+                                        onClick={handleSubmit}
                                         className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
                                     >
                                         {Loading ? "En cours.." : "Enregistrer"}
@@ -231,4 +251,4 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
     )
 }
 
-export default FomAddVehicule
+export default FormUser

@@ -1,9 +1,8 @@
 import { motion } from "motion/react";
-import Navbar from "../components/Navbar"
 import { MdOutlineAdd } from "react-icons/md";
 import { useEffect, useState } from "react";
 import FormParking from "../components/FormParking";
-import axios from "axios";
+import api from "../services/Api";
 
 
 interface Parking{
@@ -18,7 +17,7 @@ function Parking() {
     const [Error, setError] = useState<String | null>(null);
     const [Parking, setParking] = useState([])
 
-    const API_URL = 'https://parking-system-b0eo.onrender.com/api/parking/GetParking';
+    const API_URL = '/api/parking/GetParking';
     
     const fetchVehicule = async ()=> {
         try {
@@ -27,7 +26,7 @@ function Parking() {
 
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000)
-            const reponse = await axios.get(API_URL);
+            const reponse = await api.get(API_URL);
             setParking(reponse.data);
             clearTimeout(timeout);
         } catch (error) {
@@ -41,11 +40,10 @@ function Parking() {
         fetchVehicule();
     },[]);
     return (
-        <section>
-            < Navbar />
+        <section className="font-roboto">
             <div className="p-2 mt-3">
                 <div className="">
-                    <h1 className="font-semibold text-2xl"> Configuration du parking</h1>
+                    <h1 className=" text-2xl"> Configuration du parking</h1>
                 </div>
 
                 <div className="flex justify-end max-sm:grid max-sm:gap-4">
@@ -71,8 +69,8 @@ function Parking() {
                                     <thead className="bg-slate-50">
                                     <tr className="">
                                         <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:px-2 ">Type </th>
-                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:hidden  ">Nombre Total de Place</th>
-                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-lg:hidden">Place occuper</th>
+                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium ">Nombre Total de Place</th>
+                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium ">Place occuper</th>
                                     </tr>
                                     </thead>
 
@@ -82,7 +80,7 @@ function Parking() {
                                                 <td colSpan={3} className="text-center py-10 text-red-400">
                                                     <div className="flex flex-col items-center gap-4">
                                                         {/* Spinner */}
-                                                        <div className=" size-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                                                        <div className=" size-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                                                         <p className="text-gray-700 font-medium">Chargement des Parking...</p>
                                                     </div>
                                                 </td>
@@ -92,8 +90,8 @@ function Parking() {
                                                 <td colSpan={3} className="text-center py-10 text-red-400">
                                                     <p className="text-red-600 text-center font-medium">{Error}</p>
                                                     <button
-                                                        onClick={() => window.location.reload()}
-                                                        className="px-4 py-2 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600"
+                                                        onClick={() => fetchVehicule()}
+                                                        className="px-4 py-2 bg-red-500 mt-4 cursor-pointer text-white rounded-md hover:bg-red-600"
                                                     >
                                                         Réessayer
                                                     </button>
@@ -107,9 +105,9 @@ function Parking() {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ duration: 0.5, delay: index * 0.1 }} // Effet en cascade
                                                 >
-                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base font-medium text-gray-800 max-sm:px-2"> {P.type} </td>
-                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base font-medium text-gray-800 max-sm:hidden "> {P.totalPlaces} </td>
-                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base font-medium text-gray-800 max-lg:hidden"> {P.placesOccupees} </td>
+                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base text-gray-800 max-sm:px-2"> {P.type} </td>
+                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base text-gray-800  "> {P.totalPlaces} </td>
+                                                    <td className="px-6 py-2 text-center  whitespace-nowrap text-base text-gray-800 "> {P.placesOccupees} </td>
                                                 </motion.tr>
                                             ))
                                         ) : (
