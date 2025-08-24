@@ -7,21 +7,21 @@ interface ModalProps {
     isOPenModal: boolean;
     onClose: ()=> void;
     onDeleted?: () => void; 
-    vehicule: any| null;
+    user: any| null;
 }
 
-function ModalDeleteUser({isOPenModal, onClose, vehicule, onDeleted}: ModalProps) {
+function ModalDeleteUser({isOPenModal, onClose, user, onDeleted}: ModalProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleDelete = async () => {
-        if (!vehicule?._id) return;
+        if (!user?._id) return;
         setLoading(true);
         setError(null);
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 8000);
-            const url = `/api/vehicle/deleteVehicle/${vehicule._id}`;
+            const url = `/api/auth/deleteUser/${user._id}`;
             await api.delete(url, { signal: controller.signal });
             clearTimeout(timeout);
             if (onDeleted) onDeleted();
@@ -69,12 +69,14 @@ function ModalDeleteUser({isOPenModal, onClose, vehicule, onDeleted}: ModalProps
                         
                         <div className="md:w-96 md:block">
                             <h1 className="text-xl text-center py-4">Êtes-vous sûr de vouloir supprimer cet utilisateur ?</h1>
+                            <p className="text-center text-emerald-500 text-xl pb-2">{user.nom} {user.postnom} {user.prenom} </p>
                             <p className="text-center text-gray-400">
                                 La suppression de cet utilisateur est permanente et irréversible. Une fois supprimée, 
                                 il ne pourra pas être récupérée.
                             </p>
+                            
                         </div>
-
+                        
                         {error && (
                             <p className="text-red-500 text-center mt-2">{error}</p>
                         )}

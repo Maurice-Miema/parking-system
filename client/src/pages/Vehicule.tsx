@@ -10,6 +10,7 @@ import FomAddClient from "../components/FormAddClient";
 import ModalDelete from "../components/ModalDelete";
 import api from "../services/Api";
 
+
 function Recrutement() {
     const [isForm, setIsform] = useState(false); // open from
     const [isModalDelete, setIsModalDelete] = useState(false); // open Modalelete
@@ -44,7 +45,7 @@ function Recrutement() {
             setLoading(true);
             setError(null);
             
-            const url = plaque ? `/api/vehicle/searchByPlaque?plaque=${plaque}` : '/api/vehicle/getAllVehicles';
+            const url = plaque ? `/api/vehicle/searchByCode` : '/api/vehicle/getAllVehicles';
             const reponse = await api.get(url);
             setVehicule(reponse.data);
         } catch (error) {

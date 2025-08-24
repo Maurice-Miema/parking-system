@@ -55,7 +55,7 @@ function Login() {
         <section className="px-4 md:px-0 font-roboto h-screen flex items-center justify-center bg-gray-200">
             <div className="bg-white rounded-xl md:w-lg w-md md:px-14 px-4 py-8">
                 <h1 className="text-center text-2xl pb-4">Authentification</h1>
-                <h1 className="text-center text-4xl font-semibold text-emerald-500"> Parking System</h1>
+                <h1 className="text-center text-4xl font-semibold text-emerald-500"> Maugus Parking</h1>
                 <h2 className="text-center font-medium py-1">
                     Identifiez-vous pour continuer.
                 </h2>
