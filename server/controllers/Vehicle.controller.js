@@ -1,6 +1,8 @@
 const Vehicle = require("../models/Vehicle");
 const ParkingConfig = require("../models/ParkingConfig");
 const Tarif = require("../models/Tarif");
+const generateVehicleCode = require("../utils/generateCode");
+const Facture = require("../models/Facture");
 
 // Enregistrer un véhicule entrant
 exports.vehicleEntree = async (req, res) => {
@@ -14,8 +16,16 @@ exports.vehicleEntree = async (req, res) => {
             return res.status(400).json({ message: "Plus de places disponibles" });
         }
 
+        // ✅ Génération d’un code unique
+        let code;
+        let exists;
+        do {
+            code = generateVehicleCode();
+            exists = await Vehicle.findOne({ code });
+        } while (exists);
+
         // Créer le véhicule (même plaque possible)
-        const vehicle = await Vehicle.create({ type, plaque, proprietaire });
+        const vehicle = await Vehicle.create({ code, type, plaque, proprietaire });
 
         // Incrémenter les places occupées
         config.placesOccupees += 1;
@@ -131,13 +141,51 @@ exports.deleteVehicle = async (req, res) => {
 };
 
 // Recherche par plaque
-exports.searchByPlaque = async (req, res) => {
+exports.searchByCode = async (req, res) => {
     try {
-        const { plaque } = req.params;
-        const vehicle = await Vehicle.findOne({ plaque }).sort({ dateEntree: -1 });
-        if (!vehicle) return res.status(404).json({ message: "Véhicule introuvable" });
-        res.status(200).json(vehicle);
+        const { code } = req.params;
+
+        // Regex insensible à la casse (i)
+        const vehicles = await Vehicle.find({ code: { $regex: code, $options: "i" } }).sort({ dateEntree: -1 });
+
+        if (!vehicles || vehicles.length === 0) {
+            return res.status(404).json({ message: "Aucun véhicule trouvé" });
+        }
+
+        res.status(200).json(vehicles);
     } catch (error) {
         res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
 };
+
+
+// enregistrer facture
+exports.SaveFactures = async (req, res) => {
+    try {
+        const { vehicle, proprietaire, prix  } = req.body;
+        const file = req.file;
+
+        if (!vehicle || !proprietaire || !prix || !file) {
+            return res.status(400).json({ message: "Missing vehicle or invoice file" });
+        }
+
+        const newInvoice = new Facture({ vehicle, proprietaire, prix, invoiceLink: `/uploads/${file.filename}`});
+
+        await newInvoice.save();
+        res.status(201).json({ message: "Invoice saved successfully!", invoice: newInvoice });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error", error });
+    }
+}
+
+// recuper toutes les factures
+exports.getAllsFactures = async (req, res) => {
+    try {
+        const invoice = await Facture.find();
+        res.status(200).json(invoice);
+    } catch (error) {
+        res.status(500).json({ message : "Erreur Serveur", error: error.message});
+    }
+}

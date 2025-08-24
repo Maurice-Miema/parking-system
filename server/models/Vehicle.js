@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const VehicleSchema = new mongoose.Schema({
+    code: { type: String, unique: true, required: true }, // ✅ code unique du véhicule
     type: { type: String, required: true, enum: ["moto", "voiture", "bus", "camion"] },
     plaque: { type: String, required: true,},
     proprietaire: { 
@@ -25,3 +26,4 @@ const VehicleSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model("Vehicle", VehicleSchema);
+
