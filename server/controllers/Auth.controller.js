@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 
 // Inscription
 exports.registerAdmin = async (req, res) => {
-    const { nom, postnom, prenom, fonction, email, password } = req.body;
+    const { nom, postnom, prenom, email, fonction, password, role } = req.body;
     try {
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const admin = new Admin({ nom, postnom, prenom, fonction, email, password: hashedPassword });
+        const admin = new Admin({ nom, postnom, prenom, email, fonction, password: hashedPassword, role });
 
         await admin.save();
         res.status(201).json({ message: 'Admin enregistré avec succès' });
@@ -56,5 +56,43 @@ exports.getMe = async (req, res) => {
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
+};
+
+
+// getalls user
+exports.getallsUsers = async (req, res) => {
+    try {
+        const user = await Admin.find().select('-password');
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur serveur !", error: error.message});
+    }
+}
+
+
+// delete user
+exports.DeleteUser = async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = await Admin.findByIdAndDelete(id);
+        if(!user) return res.status(404).json({ message: " user introuvable "});
+        res.status(200).json({message: "User supprimer avec succes !"});
+    } catch (error) {
+        res.status(500).json({message: "Erreur serveur !"});
+    }
+}
+
+// Logout
+exports.logoutAdmin = async (req, res) => {
+    try {
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        });
+        res.status(200).json({ message: "Déconnexion réussie" });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la déconnexion", error: error.message });
     }
 };

@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 // les fichier route
 const Authroute = require('./routes/Auth.routes');
@@ -35,6 +36,7 @@ app.use(cors({
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', Authroute);
@@ -43,3 +45,4 @@ app.use("/api/parking", ParkingRoutes);
 app.use("/api/vehicle", VehicleRoutes);
 
 module.exports = app;
+
