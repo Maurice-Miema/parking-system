@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import api from "../services/Api";
+import Ticket from "./Ticket";
 
 interface PropsForm {
     isOpen: boolean;
@@ -12,6 +13,7 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
+    const [ticketData, setTicketData] = useState<any | null>(null);
     const [formData, setFormData] = useState({
         nom: "",
         postnom: "",
@@ -51,7 +53,7 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
         }
 
         try {
-            setLoading(false);
+            setLoading(true);
             setError(null);
             
             const DataSend = {
@@ -64,15 +66,15 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                     email: formData.email
                 },
             }
-            console.log("les data de form a sed :", DataSend);
             const controller = new AbortController();
             const timeout = setTimeout(()=> controller.abort(), 15000);
-            await api.post("/api/vehicle/entreeVehicule", DataSend, {
+            const response = await api.post("/api/vehicle/entreeVehicule", DataSend, {
                 signal: controller.signal
             });
+            setTicketData(response.data);
             clearTimeout(timeout);
             if (onSuccess) onSuccess();
-            onClose();
+            // onClose();
         } catch (err: any) {
             if(err.name === "CanceledError"){
                 setError("La requête a pris trop de temps. Vérifiez votre connexion.");
@@ -84,6 +86,15 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
             setLoading(false);
         }
     };
+
+    const handleClose = () => {
+        setFormData({ nom: "", postnom: "", prenom: "", email: "", plaque: "", type: "" });
+        setErrors({});
+        setError(null);
+        setTicketData(null);
+        onClose();
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -92,8 +103,8 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
-                    onClick={onClose}
-                    className='absolute inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center h-screen md:px-0 px-4'
+                    onClick={handleClose}
+                    className='absolute inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center h-screen md:px-0 px-4'
                 >
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.85, y: 20 }}
@@ -101,128 +112,146 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                         exit={{ opacity: 0, scale: 0.85, y: 20 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-md px-4 py-3 w-lg"
+                        className=""
                     >
-                        <h1 className="text-center text-2xl font-medium">Ajouter un Vehicule </h1>
+                        {!ticketData ? (
+                            <>
+                                <div className="bg-white rounded-md px-4 py-3 w-lg">
+                                    <h1 className="text-center text-2xl font-medium">Ajouter un Vehicule </h1>
 
-                        <form onSubmit={handleSubmit} className="mt-4">
+                                    <form onSubmit={handleSubmit} className="mt-4">
 
-                            <div className="grid gap-2 md:grid-cols-2">
-                                <div className="mb-2">
-                                    <label htmlFor="nom" className="block text-md">Nom</label>
-                                    <input 
-                                        id="nom"
-                                        name="nom"
-                                        type="text" 
-                                        value={formData.nom}
-                                        onChange={handleChange}
-                                        placeholder="Veuillez saisir le nom du client"
-                                        className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                    />
-                                    {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
+                                        <div className="grid gap-2 md:grid-cols-2">
+                                            <div className="mb-2">
+                                                <label htmlFor="nom" className="block text-md">Nom</label>
+                                                <input 
+                                                    id="nom"
+                                                    name="nom"
+                                                    type="text" 
+                                                    value={formData.nom}
+                                                    onChange={handleChange}
+                                                    placeholder="Veuillez saisir le nom du client"
+                                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                                />
+                                                {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
+                                            </div>
+
+                                            <div className="mb-2">
+                                                <label htmlFor="postnom" className="block text-md">Potnom</label>
+                                                <input 
+                                                    id="postnom"
+                                                    name="postnom"
+                                                    type="text"
+                                                    value={formData.postnom}
+                                                    onChange={handleChange}
+                                                    placeholder="Veuillez saisir le Postnom du client"
+                                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                                />
+                                                {errors.postnom && <p className="text-red-500 text-sm">{errors.postnom}</p>}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-2">
+                                            <label htmlFor="prenom" className="block text-md">Prenom</label>
+                                            <input 
+                                                id="prenom"
+                                                name="prenom"
+                                                type="text"
+                                                value={formData.prenom}
+                                                onChange={handleChange}
+                                                placeholder="Veuillez saisir le prénom du client"
+                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                            />
+                                            {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
+                                        </div>
+
+                                        <div className="mb-2">
+                                            <label htmlFor="email" className="block text-md">Email</label>
+                                            <input 
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                placeholder="Veuillez saisir l'adresse email du client"
+                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                            />
+                                            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                                        </div>
+
+                                        <div className="mb-2">
+                                            <label htmlFor="plaque" className="block text-md">Plaque</label>
+                                            <input 
+                                                id="plaque"
+                                                name="plaque"
+                                                type="text"
+                                                value={formData.plaque}
+                                                onChange={handleChange}
+                                                placeholder="Veuillez saisir la plaque du véhicule"
+                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                            />
+                                            {errors.plaque && <p className="text-red-500 text-sm">{errors.plaque}</p>}
+                                        </div>
+
+                                        <div className="mt-4 mb-2">
+                                            <label className="block" htmlFor="type">Type</label>
+                                            <select
+                                                name="type"
+                                                id="type"
+                                                value={formData.type}
+                                                onChange={handleChange}
+                                                className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
+                                            >
+                                                <option value="">Choisissez le type</option>
+                                                <option value="voiture">voiture</option>
+                                                <option value="camion" >camion</option>
+                                                <option value="bus">bus</option>
+                                                <option value="moto">moto</option>
+                                            </select>
+                                            {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+                                        </div>
+
+                                        {Error && (
+                                            <p className="text-center text-red-400">{Error}</p>
+                                        )}
+
+                                        <div className="flex justify-between mt-10">
+                                            <div>
+                                                <button 
+                                                    type="button"
+                                                    onClick={handleClose}
+                                                    className="py-2 px-8 text-white rounded-md bg-red-400 cursor-pointer hover:bg-red-500"
+                                                >
+                                                    Annuler
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                {Loading ? (
+                                                    <button 
+                                                        type="submit"
+                                                        disabled={Loading}
+                                                        className="py-2 px-12 rounded-md flex items-center justify-center bg-emerald-600 text-white cursor-not-allowed"
+                                                    >
+                                                        <div className=" size-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                    </button>
+                                                ) : (
+                                                    <button 
+                                                        type="submit"
+                                                        className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
+                                                    >
+                                                        Enregistrer
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
+                            </>
+                        ) : (
+                            < Ticket data={ticketData} close={handleClose} />
+                        )}
 
-                                <div className="mb-2">
-                                    <label htmlFor="postnom" className="block text-md">Potnom</label>
-                                    <input 
-                                        id="postnom"
-                                        name="postnom"
-                                        type="text"
-                                        value={formData.postnom}
-                                        onChange={handleChange}
-                                        placeholder="Veuillez saisir le Postnom du client"
-                                        className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                    />
-                                    {errors.postnom && <p className="text-red-500 text-sm">{errors.postnom}</p>}
-                                </div>
-                            </div>
-
-                            <div className="mb-2">
-                                <label htmlFor="prenom" className="block text-md">Prenom</label>
-                                <input 
-                                    id="prenom"
-                                    name="prenom"
-                                    type="text"
-                                    value={formData.prenom}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir le prénom du client"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
-                            </div>
-
-                            <div className="mb-2">
-                                <label htmlFor="email" className="block text-md">Email</label>
-                                <input 
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir l'adresse email du client"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                            </div>
-
-                            <div className="mb-2">
-                                <label htmlFor="plaque" className="block text-md">Plaque</label>
-                                <input 
-                                    id="plaque"
-                                    name="plaque"
-                                    type="text"
-                                    value={formData.plaque}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir la plaque du véhicule"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.plaque && <p className="text-red-500 text-sm">{errors.plaque}</p>}
-                            </div>
-
-                            <div className="mt-4 mb-2">
-                                <label className="block" htmlFor="type">Type</label>
-                                <select
-                                    name="type"
-                                    id="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                    className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
-                                >
-                                    <option value="">Choisissez le type</option>
-                                    <option value="voiture">voiture</option>
-                                    <option value="camion" >camion</option>
-                                    <option value="bus">bus</option>
-                                    <option value="moto">moto</option>
-                                </select>
-                                {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
-                            </div>
-
-                            {Error && (
-                                <p className="text-center text-red-400">{Error}</p>
-                            )}
-
-                            <div className="flex justify-between mt-10">
-                                <div>
-                                    <button 
-                                        type="button"
-                                        onClick={onClose}
-                                        className="py-2 px-8 text-white rounded-md bg-red-400 cursor-pointer"
-                                    >
-                                        Annuler
-                                    </button>
-                                </div>
-
-                                <div>
-                                    <button 
-                                        type="submit"
-                                        disabled={Loading}
-                                        className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
-                                    >
-                                        {Loading ? "En cours.." : "Enregistrer"}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
 
                     </motion.div>
                 </motion.section>

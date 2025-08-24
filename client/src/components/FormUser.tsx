@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState } from "react";
 import api from "../services/Api";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface PropsForm {
     isOpen: boolean;
@@ -13,6 +14,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         nom: "",
         postnom: "",
@@ -59,19 +61,17 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
             
             const DataSend = {
                 role: formData.role,
-                plaque: formData.password,
+                password: formData.password,
                 fonction: formData.fonction,
-                proprietaire: {
-                    nom: formData.nom,
-                    postnom: formData.postnom,
-                    prenom: formData.prenom,
-                    email: formData.email
-                },
+                nom: formData.nom,
+                postnom: formData.postnom,
+                prenom: formData.prenom,
+                email: formData.email
             }
             console.log("les data de form a sed :", DataSend);
             const controller = new AbortController();
             const timeout = setTimeout(()=> controller.abort(), 15000);
-            await api.post("/api/vehicle/entreeVehicule", DataSend, {
+            await api.post("/api/auth/register", DataSend, {
                 signal: controller.signal
             });
             clearTimeout(timeout);
@@ -120,7 +120,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                         type="text" 
                                         value={formData.nom}
                                         onChange={handleChange}
-                                        placeholder="Veuillez saisir le nom du client"
+                                        placeholder="Nom"
                                         className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                     />
                                     {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
@@ -134,7 +134,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                         type="text"
                                         value={formData.postnom}
                                         onChange={handleChange}
-                                        placeholder="Veuillez saisir le Postnom du client"
+                                        placeholder="Postnom"
                                         className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                     />
                                     {errors.postnom && <p className="text-red-500 text-sm">{errors.postnom}</p>}
@@ -150,7 +150,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                         type="text"
                                         value={formData.prenom}
                                         onChange={handleChange}
-                                        placeholder="Veuillez saisir le prénom du client"
+                                        placeholder="Prénom"
                                         className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                     />
                                     {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
@@ -164,7 +164,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                         type="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        placeholder="Veuillez saisir l'adresse email du client"
+                                        placeholder="Email"
                                         className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                     />
                                     {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
@@ -179,24 +179,39 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                     type="text"
                                     value={formData.fonction}
                                     onChange={handleChange}
-                                    placeholder="Veuillez saisir la plaque du véhicule"
+                                    placeholder="Fonction"
                                     className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                 />
                                 {errors.fonction && <p className="text-red-500 text-sm">{errors.fonction}</p>}
                             </div>
 
-                            <div className="mb-2">
-                                <label htmlFor="password" className="block text-md">Password Utilisateur</label>
-                                <input 
-                                    id="password"
-                                    name="password"
-                                    type="text"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Veuillez saisir la plaque du véhicule"
-                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                />
-                                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                            <div className="mb-5">
+                                <label className="block mb-2" htmlFor="password">Mot de Passe Utilisateur</label>
+                                <div className="relative">
+                                    {showPassword ? (
+                                        <FaEye 
+                                            size={25} 
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" 
+                                            onClick={() => setShowPassword(false)}
+                                        />
+                                    ) : (
+                                        <FaEyeSlash 
+                                            size={25} 
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" 
+                                            onClick={() => setShowPassword(true)}
+                                        />
+                                    )}
+                                    <input 
+                                        type={showPassword ? "text" : "password"} 
+                                        name="password" 
+                                        id="password"
+                                        onChange={handleChange}
+                                        placeholder="Entrez votre Mot de passe"
+                                        className="w-full py-2 px-4 rounded-md border border-gray-400 focus:outline-green-400"
+                                        required
+                                    />
+                                    {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                                </div>
                             </div>
 
                             <div className="mt-4 mb-2">
@@ -206,12 +221,12 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                     id="role"
                                     value={formData.role}
                                     onChange={handleChange}
-                                    className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
+                                    className="w-full border border-gray-400  focus:outline-green-400 rounded-lg py-2 px-4 "
                                 >
                                     <option value="">Choisissez le Role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Recepteur" >Recepteur</option>
-                                    <option value="Comptable">Comptable</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="recepteur" >Recepteur</option>
+                                    <option value="comptable">Comptable</option>
                                 </select>
                                 {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
                             </div>

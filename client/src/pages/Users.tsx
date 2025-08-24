@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // icone
 import { CiSearch } from "react-icons/ci";
 import { MdOutlineAdd } from "react-icons/md";
@@ -12,40 +12,33 @@ import api from "../services/Api";
 function Recrutement() {
     const [isForm, setIsform] = useState(false); // open from
     const [isModalDelete, setIsModalDelete] = useState(false); // open Modalelete
-    const [SearchTerm, setSearchTerm] = useState(""); // Search item for vehicule
-    const [debouncedSearch, setDebouncedSearch] = useState(SearchTerm);
-    // const [openMenuId , setOpenMenuId ] = useState<String | null>(null);
-    const menuRef = useRef<HTMLDivElement | null>(null);
+    const [SearchTerm, setSearchTerm] = useState(""); // Search item for User
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
-    const [Vehicule, setVehicule] = useState([]);
-    const [SelectedVehicule, setSelectedVehicule] = useState<any | null>(null)
-
-    // const handleOpenMenu = (id: String)=> {
-    //     setOpenMenuId(openMenuId === id ? null : id);
-    // }
+    const [User, setUser] = useState([]);
+    const [SelectedUser, setSelectedUser] = useState<any | null>(null)
 
     // Fermer le menu en cliquant en dehors
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                // setOpenMenuId(null);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+    // useEffect(() => {
+    //     function handleClickOutside(event: MouseEvent) {
+    //         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    //         }
+    //     }
+    //     document.addEventListener("mousedown", handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener("mousedown", handleClickOutside);
+    //     };
+    // }, []);
 
-    const fetchVehicule = async (plaque?: String)=> {
+    const fetchUser = async ()=> {
         try {
             setLoading(true);
             setError(null);
             
-            const url = plaque ? `/api/vehicle/searchByPlaque?plaque=${plaque}` : '/api/vehicle/getAllVehicles';
+            const url ='/api/auth/getUsers';
             const reponse = await api.get(url);
-            setVehicule(reponse.data);
+            console.log("la data user: ", reponse);
+            setUser(reponse.data);
         } catch (error) {
             setError("Impossible de charger les blogs. Vérifiez votre connexion.");
         } finally {
@@ -53,21 +46,21 @@ function Recrutement() {
         }
     }
 
-    useEffect(() => {
-    const handler = setTimeout(() => {
-        setDebouncedSearch(SearchTerm);
-    }, 500);
+    // useEffect(() => {
+    // const handler = setTimeout(() => {
+    //     setDebouncedSearch(SearchTerm);
+    // }, 500);
     
-    return () => clearTimeout(handler);
-    }, [SearchTerm]);
+    // return () => clearTimeout(handler);
+    // }, [SearchTerm]);
 
     useEffect(()=> {
-        fetchVehicule(debouncedSearch);
-    }, [debouncedSearch]);
+        fetchUser();
+    }, []);
 
 
-    const OpenModalDelete = (v: any)=>{
-        setSelectedVehicule(v);
+    const OpenModalDelete = (user: any)=>{
+        setSelectedUser(user);
         // setOpenMenuId(null);
         setIsModalDelete(true)
     }
@@ -136,7 +129,7 @@ function Recrutement() {
                                                 <div className="flex flex-col items-center gap-4 mt-10">
                                                     {/* Spinner */}
                                                     <div className=" size-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-                                                    <p className="text-gray-700 font-medium">Chargement des vehicules...</p>
+                                                    <p className="text-gray-700 font-medium">Chargement des Users...</p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -145,30 +138,30 @@ function Recrutement() {
                                             <td colSpan={8} className="text-center py-10 text-red-400">
                                                 <p className="text-red-600 text-center font-medium">{Error}</p>
                                                 <button
-                                                    onClick={()=> fetchVehicule()}
+                                                    onClick={()=> fetchUser()}
                                                     className="px-4 py-2 mt-5 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600"
                                                 >
                                                     Réessayer
                                                 </button>
                                             </td>
                                         </tr>
-                                    ) : Vehicule.length > 0 ? (
-                                        Vehicule.map((v: any, index)=> (
+                                    ) : User.length > 0 ? (
+                                        User.map((user: any, index)=> (
                                             <motion.tr 
-                                                key={v._id || index}
+                                                key={user._id || index}
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 }} // Effet en cascade
                                             >
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm  text-gray-800  ">{v.proprietaire.nom} {v.proprietaire.postnom} {v.proprietaire.prenom}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-lg:hidden"> {v.proprietaire.email}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 "> {v.proprietaire.email}</td>
-                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-sm:hidden"> {v.plaque}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm  text-gray-800  ">{user.nom} {user.postnom} {user.prenom}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-lg:hidden"> {user.email}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 "> {user.fonction}</td>
+                                                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-800 max-sm:hidden"> {user.role}</td>
                                                 <td className="px-6 py-1 whitespace-nowrap flex justify-center text-sm  text-gray-800 overflow-visible max-sm:text-end max-sm:px-2">
                                                     <button
-                                                        id={`button-${v._id}`}
+                                                        id={`button-${user._id}`}
                                                         type="button"
-                                                        onClick={()=> OpenModalDelete(v._id)}
+                                                        onClick={()=> OpenModalDelete(user)}
                                                         className="px-4 py-2 hover:bg-red-100 hover:rounded-md text-red-500 flex items-center gap-2 cursor-pointer"
                                                     >
                                                         <AiOutlineDelete size={20} /> Supprimer
@@ -195,13 +188,13 @@ function Recrutement() {
             </section>
 
             {/* compoent */}
-            < FormUser isOpen={isForm} onClose={()=> setIsform(false)} onSuccess={()=> fetchVehicule()} />
+            < FormUser isOpen={isForm} onClose={()=> setIsform(false)} onSuccess={()=> fetchUser()} />
             < ModalDeleteUser 
                 isOPenModal={isModalDelete} 
                 onClose={()=> setIsModalDelete(false)} 
-                vehicule={SelectedVehicule}
+                user={SelectedUser}
                 onDeleted={() => {
-                    setVehicule((prevBlogs) => prevBlogs.filter((b: any) => b._id !== SelectedVehicule._id));
+                    setUser((prevBlogs) => prevBlogs.filter((b: any) => b._id !== SelectedUser._id));
                 }}
             />
         </>

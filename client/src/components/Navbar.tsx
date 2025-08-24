@@ -3,13 +3,14 @@ import { RiMenuLine } from "react-icons/ri";
 import { useSidebar } from "../context/SidebarContext";
 import api from "../services/Api";
 import { AnimatePresence, motion } from "motion/react";
-import { Link } from "react-router-dom";
 import { IoIosLogOut } from "react-icons/io";
 import { HiOutlineChevronDown } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 interface UserType {
     nom: string;
     postnom: string;
+    prenom: String;
     email?: string;
 }
 
@@ -17,9 +18,12 @@ function Navbar() {
     const { toggleSidebar } = useSidebar();
     const [User, setUser] = useState<UserType | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<String | null>(null)
+    const [error, setError] = useState<String | null>(null);
+    const [errorlogout, setErrorLogout] = useState<String | null>(null);
+    const [loadingLogout, setLoadingLogout] = useState(false);
     const [Ismenu, setIsmenu] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null); 
+    const router = useNavigate();
 
     useEffect(()=> {
         const fecthUser = async ()=> {
@@ -53,6 +57,20 @@ function Navbar() {
             document.removeEventListener('mousedown', handleClickOutSide);
         }
     }, []);
+
+    const handlelogout = async () => {
+        try {
+            setLoadingLogout(true)
+            setErrorLogout(null)
+            await api.post("/api/auth/logout");
+            router("/");
+        } catch (error) {
+            console.error("erreur", error);
+            setErrorLogout("Impossible de se deconnecter");
+        } finally {
+            setLoadingLogout(false);
+        }
+    }
     return (
         <section 
             className="py-2 px-4 border-b-1 border-gray-300 flex justify-between items-center"
@@ -90,7 +108,7 @@ function Navbar() {
                             <p className="text-red-400">{error}</p>
                         ) : User ? (
                             <div >
-                                <h1> {User.nom} {User.postnom} </h1>
+                                <h1> {User.nom} {User.postnom} {User.prenom} </h1>
                             </div>
                         ) : (
                             <p className="text-gray-500">Non connecté</p>
@@ -118,7 +136,7 @@ function Navbar() {
                                         />
                                     </div>
 
-                                    <div className='flex justify-center text-center'>
+                                    <div className='flex justify-center text-center pt-2'>
                                         {loading ? (
                                             <div>
                                                 <p>chargement ..</p>
@@ -127,7 +145,8 @@ function Navbar() {
                                             <p className="text-red-400">{error}</p>
                                         ) : User ? (
                                             <div>
-                                                <h1 className=""> {User.nom} {User.postnom} </h1>
+                                                <h1 className="font-medium"> {User.nom} {User.postnom} {User.prenom} </h1>
+                                                <p className="text-center text-gray-400 text-sm"> {User.email} </p>
                                                 <p className="text-gray-600">admin</p>
                                             </div>
                                         ) : (
@@ -137,37 +156,31 @@ function Navbar() {
                                 </div>
 
                                 <div>
-                                    <Link 
-                                        to="/"
-                                        type="button"
-                                        className='flex items-center border border-gray-300 gap-2 py-1 rounded-md w-full justify-center cursor-pointer hover:bg-gray-50'
-                                    >
-                                        < IoIosLogOut size={30} />
-                                        Se Déconnecter
-                                    </Link>
+                                    <p className="text-center py-1 text-red-500"> {errorlogout} </p>
+                                    {loadingLogout ? (
+                                        <button 
+                                            type="button"
+                                            className='flex items-center border border-gray-300 gap-2 py-1 rounded-md w-full justify-center cursor-pointer hover:bg-gray-50'
+                                        >
+                                            <div className=" size-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            type="button"
+                                            onClick={handlelogout}
+                                            className='flex items-center border border-gray-300 gap-2 py-1 rounded-md w-full justify-center cursor-pointer hover:bg-gray-50'
+                                        >
+                                            < IoIosLogOut size={30} />
+                                            Se Déconnecter
+                                        </button>
+                                    )}
+                                    
                                 </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
                     
                 </div>
-                
-                {/* <div className="">
-                    {loading ? (
-                        <div>
-                            <p>chargement ..</p>
-                        </div>
-                    ) : error ? (
-                        <p className="text-red-400">{error}</p>
-                    ) : User ? (
-                        <>
-                            <h1 className="font-bold"> {User.nom} {User.postnom} </h1>
-                            <p className="text-gray-600">admin</p>
-                        </>
-                    ) : (
-                        <p className="text-gray-500">Non connecté</p>
-                    )}
-                </div> */}
 
             </div>
 
