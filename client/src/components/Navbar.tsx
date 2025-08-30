@@ -89,7 +89,7 @@ function Navbar() {
                 >
                     <div className='cursor-pointer'>
                         <img 
-                            src="/src/assets/imgs/profil.jpeg" 
+                            src="./imgs/profil.jpeg" 
                             alt="Picture user"
                             onClick={()=> setIsmenu(!Ismenu)}
                             className='size-7 md:h-11 md:w-11 rounded-full lg:h-14 lg:w-14'
@@ -129,7 +129,7 @@ function Navbar() {
                                 <div className='mb-2'>
                                     <div className='flex justify-center'>
                                         <img 
-                                            src="/src/assets/imgs/profil.jpeg" 
+                                            src="./imgs/profil.jpeg" 
                                             alt="Picture user" 
                                             className='h-9 w-9 md:h-11 md:w-11 rounded-full lg:h-20 lg:w-20'
                                         />
