@@ -7,7 +7,23 @@ import { FaUserCog } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { FaCar } from "react-icons/fa";
 import { BsFillSignNoParkingFill } from "react-icons/bs";
+import { motion } from "motion/react";
 
+
+    // Variants Framer Motion
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.15 }, // délai entre chaque item
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -30 },
+        visible: { opacity: 1, x: 0,},
+        transition: { duration: 0.4, ease: "easeOut" } 
+    };
 
 function SideBar() {
     const { isOpen, toggleSidebar } = useSidebar();
@@ -37,24 +53,37 @@ function SideBar() {
                     <div>
                         <h1 className="text-left text-xl font-semibold text-gray-500">Menu</h1>
                     </div>
-                    <ul className="mt-5 space-y-4">
-                        {filteredMenu.map((item, index) => (
-                            <li key={index}>
-                                <NavLink
-                                    to={item.path}
-                                    className={({isActive})=>
-                                        `flex items-center gap-4 text-xl  cursor-pointer ${
-                                            isActive ? "text-emerald-600 font-medium text-center text-xl" : "hover:text-emerald-600"
-                                        }`
-                                    }
+                    {!user ? (
+                        <div className="flex flex-col items-center gap-4 mt-20">
+                            <div className=" size-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    ) : (
+                        <motion.ul 
+                            className="mt-5 space-y-4"
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {filteredMenu.map((item, index) => (
+                                <motion.li 
+                                    key={index} 
+                                    variants={itemVariants}
                                 >
-                                    {item.icone}
-                                    {item.link}
-                                </NavLink>
-                            </li>
-                        ))}
-
-                    </ul>
+                                    <NavLink
+                                        to={item.path}
+                                        className={({isActive})=>
+                                            `flex items-center gap-4 text-xl  cursor-pointer ${
+                                                isActive ? "text-emerald-600 font-medium text-center text-xl" : "hover:text-emerald-600"
+                                            }`
+                                        }
+                                    >
+                                        {item.icone}
+                                        {item.link}
+                                    </NavLink>
+                                </motion.li>
+                            ))}
+                        </motion.ul>
+                    )}
                 </div>
             </div>
 
@@ -76,24 +105,30 @@ function SideBar() {
                     </div>
 
                     <div className="mt-20 flex justify-center">
-                        <ul className="mt-5 space-y-6 text-white">
-                            {LinkMenu.map((item, index) => (
-                                <li key={index}>
-                                    <NavLink
-                                        to={item.path}
-                                        onClick={toggleSidebar}
-                                        className={({isActive})=>
-                                            `flex items-center gap-2 text-xl cursor-pointer ${
-                                                isActive ? "text-emerald-600 font-medium text-xl" : "hover:text-emerald-600"
-                                            }`
-                                        }
-                                    >
-                                        {item.icone}
-                                        {item.link}
-                                    </NavLink>
-                                </li>
-                            ))}
-                        </ul>
+                        {!user ? (
+                            <div className="flex flex-col items-center gap-4 mt-20">
+                                <div className=" size-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        ) : (
+                            <ul className="mt-5 space-y-6 text-white">
+                                {filteredMenu.map((item, index) => (
+                                    <li key={index}>
+                                        <NavLink
+                                            to={item.path}
+                                            onClick={toggleSidebar}
+                                            className={({isActive})=>
+                                                `flex items-center gap-2 text-xl cursor-pointer ${
+                                                    isActive ? "text-emerald-600 font-medium text-xl" : "hover:text-emerald-600"
+                                                }`
+                                            }
+                                        >
+                                            {item.icone}
+                                            {item.link}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                 </div>
             )}
