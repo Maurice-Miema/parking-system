@@ -3,6 +3,7 @@ import { MdOutlineAdd } from "react-icons/md";
 import { useEffect, useState } from "react";
 import FormParking from "../components/FormParking";
 import api from "../services/Api";
+import { useAuth } from "../context/AuthContext";
 
 
 interface Parking{
@@ -15,7 +16,8 @@ function Parking() {
     const [isopemform, setIsopemform] = useState(false);
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<String | null>(null);
-    const [Parking, setParking] = useState([])
+    const [Parking, setParking] = useState([]);
+    const { user } = useAuth();
 
     const API_URL = '/api/parking/GetParking';
     
@@ -49,14 +51,16 @@ function Parking() {
                 <div className="flex justify-end max-sm:grid max-sm:gap-4">
 
                     <div className="flex justify-end">
-                        <button
-                            onClick={() => setIsopemform(true)}
-                            className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
-                            type="button"
-                        >
-                            < MdOutlineAdd size={25} />
-                            Ajouter
-                        </button>
+                        {user?.role !== "recepteur" && (
+                            <button
+                                onClick={() => setIsopemform(true)}
+                                className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
+                                type="button"
+                            >
+                                < MdOutlineAdd size={25} />
+                                Ajouter
+                            </button>
+                        )} 
                     </div>
                 </div>
 

@@ -18,18 +18,6 @@ function Recrutement() {
     const [User, setUser] = useState([]);
     const [SelectedUser, setSelectedUser] = useState<any | null>(null)
 
-    // Fermer le menu en cliquant en dehors
-    // useEffect(() => {
-    //     function handleClickOutside(event: MouseEvent) {
-    //         if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-    //         }
-    //     }
-    //     document.addEventListener("mousedown", handleClickOutside);
-    //     return () => {
-    //         document.removeEventListener("mousedown", handleClickOutside);
-    //     };
-    // }, []);
-
     const fetchUser = async ()=> {
         try {
             setLoading(true);
@@ -37,7 +25,6 @@ function Recrutement() {
             
             const url ='/api/auth/getUsers';
             const reponse = await api.get(url);
-            console.log("la data user: ", reponse);
             setUser(reponse.data);
         } catch (error) {
             setError("Impossible de charger les blogs. Vérifiez votre connexion.");

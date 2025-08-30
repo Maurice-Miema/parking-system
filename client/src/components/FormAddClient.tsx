@@ -74,7 +74,6 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
             setTicketData(response.data);
             clearTimeout(timeout);
             if (onSuccess) onSuccess();
-            // onClose();
         } catch (err: any) {
             if(err.name === "CanceledError"){
                 setError("La requête a pris trop de temps. Vérifiez votre connexion.");
@@ -104,7 +103,7 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     onClick={handleClose}
-                    className='absolute inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center h-screen md:px-0 px-4'
+                    className='absolute inset-0 bg-black/80 backdrop-blur-md flex justify-center items-center h-screen '
                 >
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.85, y: 20 }}
@@ -112,147 +111,143 @@ function FomAddVehicule( {isOpen, onClose, onSuccess}: PropsForm) {
                         exit={{ opacity: 0, scale: 0.85, y: 20 }}
                         transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         onClick={(e) => e.stopPropagation()}
-                        className=""
+                        className="md:px-0"
                     >
                         {!ticketData ? (
-                            <>
-                                <div className="bg-white rounded-md px-4 py-3 w-lg">
-                                    <h1 className="text-center text-2xl font-medium">Ajouter un Vehicule </h1>
+                            <div className="bg-white rounded-md px-4 py-3 lg:w-lg">
+                                <h1 className="text-center text-2xl font-medium">Ajouter un Vehicule </h1>
 
-                                    <form onSubmit={handleSubmit} className="mt-4">
+                                <form onSubmit={handleSubmit} className="mt-4">
 
-                                        <div className="grid gap-2 md:grid-cols-2">
-                                            <div className="mb-2">
-                                                <label htmlFor="nom" className="block text-md">Nom</label>
-                                                <input 
-                                                    id="nom"
-                                                    name="nom"
-                                                    type="text" 
-                                                    value={formData.nom}
-                                                    onChange={handleChange}
-                                                    placeholder="Veuillez saisir le nom du client"
-                                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                                />
-                                                {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
-                                            </div>
-
-                                            <div className="mb-2">
-                                                <label htmlFor="postnom" className="block text-md">Potnom</label>
-                                                <input 
-                                                    id="postnom"
-                                                    name="postnom"
-                                                    type="text"
-                                                    value={formData.postnom}
-                                                    onChange={handleChange}
-                                                    placeholder="Veuillez saisir le Postnom du client"
-                                                    className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                                />
-                                                {errors.postnom && <p className="text-red-500 text-sm">{errors.postnom}</p>}
-                                            </div>
+                                    <div className="grid gap-2 md:grid-cols-2">
+                                        <div className="mb-2">
+                                            <label htmlFor="nom" className="block text-md">Nom</label>
+                                            <input 
+                                                id="nom"
+                                                name="nom"
+                                                type="text" 
+                                                value={formData.nom}
+                                                onChange={handleChange}
+                                                placeholder="Veuillez saisir le nom du client"
+                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                            />
+                                            {errors.nom && <p className="text-red-500 text-sm">{errors.nom}</p>}
                                         </div>
 
                                         <div className="mb-2">
-                                            <label htmlFor="prenom" className="block text-md">Prenom</label>
+                                            <label htmlFor="postnom" className="block text-md">Potnom</label>
                                             <input 
-                                                id="prenom"
-                                                name="prenom"
+                                                id="postnom"
+                                                name="postnom"
                                                 type="text"
-                                                value={formData.prenom}
+                                                value={formData.postnom}
                                                 onChange={handleChange}
-                                                placeholder="Veuillez saisir le prénom du client"
+                                                placeholder="Veuillez saisir le Postnom du client"
                                                 className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
                                             />
-                                            {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
+                                            {errors.postnom && <p className="text-red-500 text-sm">{errors.postnom}</p>}
                                         </div>
+                                    </div>
 
-                                        <div className="mb-2">
-                                            <label htmlFor="email" className="block text-md">Email</label>
-                                            <input 
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                placeholder="Veuillez saisir l'adresse email du client"
-                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                            />
-                                            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                                        </div>
+                                    <div className="mb-2">
+                                        <label htmlFor="prenom" className="block text-md">Prenom</label>
+                                        <input 
+                                            id="prenom"
+                                            name="prenom"
+                                            type="text"
+                                            value={formData.prenom}
+                                            onChange={handleChange}
+                                            placeholder="Veuillez saisir le prénom du client"
+                                            className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                        />
+                                        {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom}</p>}
+                                    </div>
 
-                                        <div className="mb-2">
-                                            <label htmlFor="plaque" className="block text-md">Plaque</label>
-                                            <input 
-                                                id="plaque"
-                                                name="plaque"
-                                                type="text"
-                                                value={formData.plaque}
-                                                onChange={handleChange}
-                                                placeholder="Veuillez saisir la plaque du véhicule"
-                                                className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
-                                            />
-                                            {errors.plaque && <p className="text-red-500 text-sm">{errors.plaque}</p>}
-                                        </div>
+                                    <div className="mb-2">
+                                        <label htmlFor="email" className="block text-md">Email</label>
+                                        <input 
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            placeholder="Veuillez saisir l'adresse email du client"
+                                            className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                        />
+                                        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                                    </div>
 
-                                        <div className="mt-4 mb-2">
-                                            <label className="block" htmlFor="type">Type</label>
-                                            <select
-                                                name="type"
-                                                id="type"
-                                                value={formData.type}
-                                                onChange={handleChange}
-                                                className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
+                                    <div className="mb-2">
+                                        <label htmlFor="plaque" className="block text-md">Plaque</label>
+                                        <input 
+                                            id="plaque"
+                                            name="plaque"
+                                            type="text"
+                                            value={formData.plaque}
+                                            onChange={handleChange}
+                                            placeholder="Veuillez saisir la plaque du véhicule"
+                                            className="w-full border border-gray-400 focus:outline-emerald-400 rounded-lg py-2 px-4" 
+                                        />
+                                        {errors.plaque && <p className="text-red-500 text-sm">{errors.plaque}</p>}
+                                    </div>
+
+                                    <div className="mt-4 mb-2">
+                                        <label className="block" htmlFor="type">Type</label>
+                                        <select
+                                            name="type"
+                                            id="type"
+                                            value={formData.type}
+                                            onChange={handleChange}
+                                            className="w-full border border-gray-400  focus:outline-gray-400 rounded-lg py-2 px-4 "
+                                        >
+                                            <option value="">Choisissez le type</option>
+                                            <option value="voiture">voiture</option>
+                                            <option value="camion" >camion</option>
+                                            <option value="bus">bus</option>
+                                            <option value="moto">moto</option>
+                                        </select>
+                                        {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+                                    </div>
+
+                                    {Error && (
+                                        <p className="text-center text-red-400">{Error}</p>
+                                    )}
+
+                                    <div className="flex justify-between mt-10 max-md:gap-4">
+                                        <div>
+                                            <button 
+                                                type="button"
+                                                onClick={handleClose}
+                                                className="py-2 px-8 text-white rounded-md bg-red-400 cursor-pointer hover:bg-red-500"
                                             >
-                                                <option value="">Choisissez le type</option>
-                                                <option value="voiture">voiture</option>
-                                                <option value="camion" >camion</option>
-                                                <option value="bus">bus</option>
-                                                <option value="moto">moto</option>
-                                            </select>
-                                            {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+                                                Annuler
+                                            </button>
                                         </div>
 
-                                        {Error && (
-                                            <p className="text-center text-red-400">{Error}</p>
-                                        )}
-
-                                        <div className="flex justify-between mt-10">
-                                            <div>
+                                        <div>
+                                            {Loading ? (
                                                 <button 
-                                                    type="button"
-                                                    onClick={handleClose}
-                                                    className="py-2 px-8 text-white rounded-md bg-red-400 cursor-pointer hover:bg-red-500"
+                                                    type="submit"
+                                                    disabled={Loading}
+                                                    className="py-2 px-12 rounded-md flex items-center justify-center bg-emerald-600 text-white cursor-not-allowed"
                                                 >
-                                                    Annuler
+                                                    <div className=" size-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                                 </button>
-                                            </div>
-
-                                            <div>
-                                                {Loading ? (
-                                                    <button 
-                                                        type="submit"
-                                                        disabled={Loading}
-                                                        className="py-2 px-12 rounded-md flex items-center justify-center bg-emerald-600 text-white cursor-not-allowed"
-                                                    >
-                                                        <div className=" size-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                    </button>
-                                                ) : (
-                                                    <button 
-                                                        type="submit"
-                                                        className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
-                                                    >
-                                                        Enregistrer
-                                                    </button>
-                                                )}
-                                            </div>
+                                            ) : (
+                                                <button 
+                                                    type="submit"
+                                                    className="py-2 px-8 rounded-md bg-emerald-600 text-white cursor-pointer"
+                                                >
+                                                    Enregistrer
+                                                </button>
+                                            )}
                                         </div>
-                                    </form>
-                                </div>
-                            </>
+                                    </div>
+                                </form>
+                            </div>
                         ) : (
                             < Ticket data={ticketData} close={handleClose} />
                         )}
-
-
                     </motion.div>
                 </motion.section>
             )}
