@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom"
 import { useSidebar } from "../context/SidebarContext";
+import { useAuth } from "../context/AuthContext";
 import { IoClose } from "react-icons/io5";
 import { MdPayment } from "react-icons/md";
 import { FaUserCog } from "react-icons/fa";
@@ -10,13 +11,21 @@ import { BsFillSignNoParkingFill } from "react-icons/bs";
 
 function SideBar() {
     const { isOpen, toggleSidebar } = useSidebar();
+    const { user } = useAuth();
+
     const LinkMenu = [
         {"link": "Dashboard", "icone": <MdDashboard size={25} />, "path": "/Dashboard"},
         {"link": "Vehicule", "icone": <FaCar size={25} />, "path": "/Vehicule"},
         {"link": "Parking", "icone": <BsFillSignNoParkingFill size={25} />, "path": "/Parking"},
         {"link": "Tarifs", "icone": <MdPayment size={25} />, "path": "/Tarif"},
-        {"link": "Utilisateurs", "icone": <FaUserCog size={25} />, "path": "/Utilisateur"},
-    ]
+        {"link": "Utilisateurs", "icone": <FaUserCog size={25} />, "path": "/Utilisateur", role: "admin"},
+    ];
+
+    const filteredMenu = LinkMenu.filter((item) => {
+        if (!user) return false; // si pas encore chargé
+        if (item.role && item.role !== user.role) return false;
+        return true;
+    });
     return (
         <>
             <div className="lg:w-64 bg-gray-50  px-8 py-4 max-lg:hidden">
@@ -29,7 +38,7 @@ function SideBar() {
                         <h1 className="text-left text-xl font-semibold text-gray-500">Menu</h1>
                     </div>
                     <ul className="mt-5 space-y-4">
-                        {LinkMenu.map((item, index) => (
+                        {filteredMenu.map((item, index) => (
                             <li key={index}>
                                 <NavLink
                                     to={item.path}
@@ -45,7 +54,6 @@ function SideBar() {
                             </li>
                         ))}
 
-                        
                     </ul>
                 </div>
             </div>

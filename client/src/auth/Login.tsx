@@ -128,13 +128,24 @@ function Login() {
                     </div>
 
                     <div className="mt-5">
-                        <button 
+                        {loading ? (
+                            
+                            <button 
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2 text-white rounded-md text-xl cursor-pointer bg-emerald-600 hover:bg-emerald-700"
-                        >
-                            {loading ? "Connexion en cours ....": "Se Connecter"}
-                        </button>
+                            className="w-full py-2 text-white flex justify-center rounded-md text-xl cursor-pointer bg-emerald-600 hover:bg-emerald-700"
+                            >
+                                <div className="size-7 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                        ) : (
+                            <button 
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-2 text-white rounded-md text-xl cursor-pointer bg-emerald-600 hover:bg-emerald-700"
+                            >
+                                Se Connecter
+                            </button>
+                        )}
                     </div>
                 </form>
             </div>

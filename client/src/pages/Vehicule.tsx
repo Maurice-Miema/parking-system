@@ -9,7 +9,8 @@ import { AiOutlineDelete } from "react-icons/ai";
 import FomAddClient from "../components/FormAddClient";
 import ModalDelete from "../components/ModalDelete";
 import api from "../services/Api";
-
+import Facture from "../components/Facture";
+import { useAuth } from "../context/AuthContext";
 
 function Recrutement() {
     const [isForm, setIsform] = useState(false); // open from
@@ -21,7 +22,10 @@ function Recrutement() {
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<string | null>(null);
     const [Vehicule, setVehicule] = useState([]);
-    const [SelectedVehicule, setSelectedVehicule] = useState<any | null>(null)
+    const [SelectedVehicule, setSelectedVehicule] = useState<any | null>(null);
+    const [openFac, setOPenFac] = useState(false);
+    const [FactureData, setFactureData] = useState<any | null>(null);
+    const { user } = useAuth();
 
     const handleOpenMenu = (id: String)=> {
         setOpenMenuId(openMenuId === id ? null : id);
@@ -74,6 +78,26 @@ function Recrutement() {
         setIsModalDelete(true)
     }
 
+    const OpenFacture = async (plaque: string) => {
+        try {
+            setOpenMenuId(null);
+            setLoading(true);
+             // envoi en JSON
+            const response = await api.post('/api/vehicle/sortieVehicule', {
+                plaque: plaque
+            });
+            
+            console.log("data vehicule sotant", response);
+            setFactureData(response.data);
+            setOPenFac(true);
+        } catch (err) {
+            console.error(err);
+            alert("Erreur lors de la récupération de la facture");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (    
         <>
             <section className="font-roboto">
@@ -104,14 +128,16 @@ function Recrutement() {
                         </div>
 
                         <div className="sm:w-[50%] flex sm:justify-end">
-                            <button
-                                onClick={() => setIsform(true)}
-                                className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
-                                type="button"
-                            >
-                                < MdOutlineAdd size={25} />
-                                Enregistrer un Vehicule
-                            </button>
+                            {user?.role !== "comptable" && (
+                                <button
+                                    onClick={() => setIsform(true)}
+                                    className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
+                                    type="button"
+                                >
+                                    < MdOutlineAdd size={25} />
+                                    Enregistrer un Vehicule
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -209,18 +235,23 @@ function Recrutement() {
                                                                 {/* <li className="px-4 py-2 hover:bg-gray-100 hover:rounded-md flex items-center gap-2 cursor-pointer">
                                                                     <GrView size={20} className="text-gray-600" /> View Details
                                                                 </li> */}
-                                                                <li 
-                                                                    
-                                                                    className="px-4 py-2 hover:bg-gray-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
-                                                                >
-                                                                    <CiEdit size={20} /> Marquer Sortie
-                                                                </li>
-                                                                <li
-                                                                    onClick={() => OpenModalDelete(v)}
-                                                                    className="px-4 py-2 hover:bg-red-100 hover:rounded-md text-red-500 flex items-center gap-2 cursor-pointer"
-                                                                >
-                                                                    <AiOutlineDelete size={20} /> Supprimer
-                                                                </li>
+                                                                {user?.role !== "recepteur" && (
+                                                                    <li 
+                                                                        onClick={() => OpenFacture(v.plaque)}
+                                                                        className="px-4 py-2 hover:bg-gray-100 hover:rounded-md flex items-center gap-2 cursor-pointer"
+                                                                    >
+                                                                        <CiEdit size={20} /> Marquer Sortie
+                                                                    </li>
+                                                                )}
+                                                                {user?.role !== "comptable" && (
+
+                                                                    <li
+                                                                        onClick={() => OpenModalDelete(v)}
+                                                                        className="px-4 py-2 hover:bg-red-100 hover:rounded-md text-red-500 flex items-center gap-2 cursor-pointer"
+                                                                    >
+                                                                        <AiOutlineDelete size={20} /> Supprimer
+                                                                    </li>
+                                                                )}
                                                             </ul>
                                                         </motion.div>
                                                     )}
@@ -245,9 +276,15 @@ function Recrutement() {
             </section>
 
             {/* compoent */}
+            <Facture 
+                Open={openFac} 
+                onClose={() => setOPenFac(false)} 
+                factureData={FactureData} 
+                onPrinted={() => fetchVehicule()} // pour mettre à jour après impression
+            />
             < FomAddClient isOpen={isForm} onClose={()=> setIsform(false)} onSuccess={()=> fetchVehicule()} />
             < ModalDelete 
-                isOPenModal={isModalDelete} 
+                isOPenModal={isModalDelete}
                 onClose={()=> setIsModalDelete(false)} 
                 vehicule={SelectedVehicule}
                 onDeleted={() => {

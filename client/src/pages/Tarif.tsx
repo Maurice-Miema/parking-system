@@ -3,12 +3,14 @@ import { motion } from 'motion/react';
 import FormTarif from '../components/FormTarif';
 import { useEffect, useState } from 'react';
 import api from '../services/Api';
+import { useAuth } from '../context/AuthContext';
 
 function Tarif() {
     const [isOPenForm, setIsOpenForm] = useState(false);
     const [Loading, setLoading] = useState(false);
     const [Error, setError] = useState<String | null>(null);
-    const [Tarif, setTarif] = useState([])
+    const [Tarif, setTarif] = useState([]);
+    const { user } = useAuth();
 
     const API_URL = '/api/tarifs/GetTarif';
     
@@ -44,14 +46,16 @@ function Tarif() {
                 <div className="flex justify-end max-sm:grid max-sm:gap-4">
                 
                     <div className="flex justify-end">
-                        <button
-                            onClick={() => setIsOpenForm(true)}
-                            className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
-                            type="button"
-                        >
-                            < MdOutlineAdd size={25} />
-                            Ajouter
-                        </button>
+                        {user?.role !== 'recepteur' && (
+                            <button
+                                onClick={() => setIsOpenForm(true)}
+                                className="px-4 py-2 rounded-lg bg-emerald-600 text-white cursor-pointer flex items-center gap-1" 
+                                type="button"
+                            >
+                                < MdOutlineAdd size={25} />
+                                Ajouter
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -62,10 +66,10 @@ function Tarif() {
                             <div className="border border-gray-200 rounded-lg  overflow-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-slate-50">
-                                    <tr className="">
-                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:px-2 ">Type </th>
-                                        <th scope="col" className="px-6 py-3 text-center text-base font-medium   ">Prix par Heure</th>
-                                    </tr>
+                                        <tr className="">
+                                            <th scope="col" className="px-6 py-3 text-center text-base font-medium max-sm:px-2 ">Type </th>
+                                            <th scope="col" className="px-6 py-3 text-center text-base font-medium   ">Prix par Heure</th>
+                                        </tr>
                                     </thead>
 
                                     <tbody className="divide-y divide-gray-200 text-xl">

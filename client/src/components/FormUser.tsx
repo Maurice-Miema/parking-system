@@ -225,7 +225,7 @@ function FormUser( {isOpen, onClose, onSuccess}: PropsForm) {
                                 >
                                     <option value="">Choisissez le Role</option>
                                     <option value="admin">Admin</option>
-                                    <option value="recepteur" >Recepteur</option>
+                                    <option value="recepteur" >Receptionniste</option>
                                     <option value="comptable">Comptable</option>
                                 </select>
                                 {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}

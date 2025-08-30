@@ -12,6 +12,7 @@ interface UserType {
     postnom: string;
     prenom: String;
     email?: string;
+    role?: string;
 }
 
 function Navbar() {
@@ -30,10 +31,8 @@ function Navbar() {
             try {
                 setLoading(true)
                 setError(null)
-                const res = await api.get("/api/auth/me",{
-                    withCredentials: true 
-                });
-                // console.log("info usser conect: ", res);
+                const res = await api.get("/api/auth/me");
+                console.log("info usser conect: ", res);
                 setUser(res.data);
             } catch (error) {
                 console.error("erreur", error);
@@ -147,7 +146,7 @@ function Navbar() {
                                             <div>
                                                 <h1 className="font-medium"> {User.nom} {User.postnom} {User.prenom} </h1>
                                                 <p className="text-center text-gray-400 text-sm"> {User.email} </p>
-                                                <p className="text-gray-600">admin</p>
+                                                <p className="text-gray-600"> {User.role} </p>
                                             </div>
                                         ) : (
                                             <p className="text-gray-500">Non connecté</p>

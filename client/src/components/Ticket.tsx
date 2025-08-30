@@ -22,10 +22,10 @@ function Ticket({ data, close }:TicketProps ) {
         }
     };
     return (
-        <div className="md:w-xl gap-2 grid">
+        <div className="md:w-xl gap-2 grid max-sm:px-4">
             <div 
                 ref={ticketRef}
-                className='p-6 border rounded-md shadow-lg bg-white'
+                className='p-6 max-sm:p-5 border rounded-md shadow-lg bg-white'
             >
                 <div className='flex justify-between mb-4'>
                     <h2 className="md:text-xl font-bold">Ticket de Parking</h2>
@@ -53,7 +53,7 @@ function Ticket({ data, close }:TicketProps ) {
                 </div>
             </div>
 
-            <div className='border flex justify-between rounded-md shadow-lg bg-white px-6 py-2'>
+            <div className='border flex justify-between rounded-md shadow-lg bg-white px-6 py-2 max-sm:px-2'>
                 <div>
                     <button 
                         type="button"
